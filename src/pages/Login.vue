@@ -16,9 +16,9 @@
 
 <script>
 import { QSpinnerDots } from 'quasar';
-// import { FirebaseService } from '../services/firebase';
 import * as FirebaseService from '../services/firebase';
 export default {
+    name: 'Login',
     components: {
         QSpinnerDots,
     },
@@ -29,8 +29,13 @@ export default {
     },
     methods: {
         login: async function () {
-            this.userData = await FirebaseService.signInWithGoogle();
-            console.log(this.userData);
+            this.userData = await FirebaseService.signInWithGoogle().catch((error) => {
+                console.log(error);
+            });
+            if (this.userData) {
+                const jwt = await FirebaseService.getJwt(`${process.env.SERVER_HOST}/auth/callback`, this.userData);
+                localStorage.setItem('token', jwt);
+            }
         },
     },
 };

@@ -48,6 +48,8 @@ module.exports = configure(function(/* ctx */) {
                 storageBucket: 'lb-apps-auth.appspot.com',
                 messagingSenderId: '1087240179234',
                 appId: '1:1087240179234:web:6c616025e8fb0fac52847b',
+                GRAPHQL_HOST: 'http://localhost:3000/graphql/',
+                SERVER_HOST: 'http://localhost:3000',
             },
             vueRouterMode: 'hash', // available values: 'hash', 'history'
 

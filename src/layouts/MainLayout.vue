@@ -15,7 +15,11 @@
           Quasar App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-avatar>
+            <img :src="userData.picture">
+          </q-avatar>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -46,38 +50,56 @@
   </q-layout>
 </template>
 
-<script lang="ts">
+<script>
 import EssentialLink from 'components/EssentialLink.vue'
+export default {
+  name: 'MainLayout',
+  components:{
+    EssentialLink,
+  },
+  data(){
+    return {
+      userData:null,
+      leftDrawerOpen: false,
+      essentialLinks: [
+        {
+          title:'Login',
+          caption:'',
+          icon:'login',
+          link:'login'
+        }
+      ],
+    }
+  },
+  computed:{
+    userToken(){
+      return localStorage.getItem('token');
+    }
+  },
+  created(){
+    this.userData = this.parseJwt(this.userToken);
+    if(this.isExpired()){
+      console.log('token expired');
+      // TODO: sent to login page;
+      // this.$router.push('/login');
+    }
+  },
+  methods:{
+    parseJwt (token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
 
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title:'Login',
-    caption:'',
-    icon:'login',
-    link:'login'
+      return JSON.parse(jsonPayload);
+    },
+    isExpired(){
+      if (Date.now() >= this.userData.exp * 1000) {
+        return false;
+      }
+      return true;
+    }
   }
-  
-];
-
-import { Vue, Component } from 'vue-property-decorator';
-
-@Component({
-  components: { EssentialLink }
-})
-export default class MainLayout extends Vue {
-  leftDrawerOpen = false;
-  essentialLinks = linksData;
 }
 </script>
