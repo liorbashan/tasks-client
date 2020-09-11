@@ -17,7 +17,7 @@
 
         <div>
           <q-avatar>
-            <img :src="userData.picture">
+            <img referrerpolicy="no-referrer" :src="userData.picture">
           </q-avatar>
         </div>
       </q-toolbar>
