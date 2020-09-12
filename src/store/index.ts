@@ -1,3 +1,4 @@
+import { UserInterface } from './user/state';
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
 
@@ -10,24 +11,24 @@ import Vuex from 'vuex';
  */
 
 export interface StateInterface {
-  // Define your own store structure, using submodules if needed
-  // example: ExampleStateInterface;
-  // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  example: unknown;
+    // Define your own store structure, using submodules if needed
+    // example: ExampleStateInterface;
+    // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
+    user: UserInterface;
 }
 
-export default store(function ({ Vue }) {
-  Vue.use(Vuex);
+export default store(function({ Vue }) {
+    Vue.use(Vuex);
 
-  const Store = new Vuex.Store<StateInterface>({
-    modules: {
-      // example
-    },
+    const Store = new Vuex.Store<StateInterface>({
+        modules: {
+            // example
+        },
 
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: !!process.env.DEV
-  });
+        // enable strict mode (adds overhead!)
+        // for dev mode only
+        strict: !!process.env.DEV,
+    });
 
-  return Store;
+    return Store;
 });

@@ -1,27 +1,30 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+const tokenName = process.env.TOKEN_NAME as string;
 
-/**
- * Gets Firebase's auth service
- * https://firebase.google.com/docs/reference/js/firebase.auth.html#callable
- * @return {Interface} The Firebase Auth service interface
- */
 export const auth = () => {
     return firebase.auth();
 };
 
 export const signInWithGoogle = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    const data = await firebase
+    const googleAuthResponse = await firebase
         .auth()
         .signInWithPopup(provider)
         .catch((error) => {
             console.log('🤕' + error.message);
         });
-    if (data) {
-        const userData = data?.additionalUserInfo?.profile;
-        return userData;
+    if (googleAuthResponse) {
+        const userData = googleAuthResponse?.additionalUserInfo?.profile;
+        if (userData) {
+            const jwt = await getJwt(`${process.env.SERVER_HOST}/auth/callback`, userData);
+            localStorage.setItem(tokenName, jwt);
+        }
     }
+};
+
+export const logout = () => {
+    localStorage.removeItem(tokenName);
 };
 
 export const getJwt = async (url: string, userData: any): Promise<string> => {

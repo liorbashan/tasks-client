@@ -50,6 +50,7 @@ module.exports = configure(function(/* ctx */) {
                 appId: '1:1087240179234:web:6c616025e8fb0fac52847b',
                 GRAPHQL_HOST: 'http://localhost:3000/graphql/',
                 SERVER_HOST: 'http://localhost:3000',
+                TOKEN_NAME: 'tasksToken',
             },
             vueRouterMode: 'hash', // available values: 'hash', 'history'
 
@@ -63,7 +64,7 @@ module.exports = configure(function(/* ctx */) {
             // rtl: false, // https://quasar.dev/options/rtl-support
             // preloadChunks: true,
             // showProgress: false,
-            // gzip: true,
+            gzip: true,
             // analyze: true,
 
             // Options below are automatically set depending on the env, set them if you want to override

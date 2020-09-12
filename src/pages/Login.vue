@@ -32,10 +32,6 @@ export default {
             this.userData = await FirebaseService.signInWithGoogle().catch((error) => {
                 console.log(error);
             });
-            if (this.userData) {
-                const jwt = await FirebaseService.getJwt(`${process.env.SERVER_HOST}/auth/callback`, this.userData);
-                localStorage.setItem('token', jwt);
-            }
         },
     },
 };
