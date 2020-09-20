@@ -4,14 +4,19 @@
             <v-list>
                 <v-list-item>
                     <v-list-item-avatar>
-                        <v-img src="../assets/logo-white.png"></v-img>
+                        <router-link v-if="!space" class="white--text" to="/">
+                            <v-btn depressed fab text small>
+                                <v-icon>home</v-icon>
+                            </v-btn>
+                        </router-link>
+                        <v-img class="space-icon" v-if="space" :src="space.imageUrl"></v-img>
                     </v-list-item-avatar>
                 </v-list-item>
 
                 <v-list-item link>
                     <v-list-item-content>
                         <v-list-item-title class="title">{{applicationName}}</v-list-item-title>
-                        <v-list-item-subtitle></v-list-item-subtitle>
+                        <v-list-item-subtitle v-if="space">{{space.title}}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -37,12 +42,19 @@
 
         <v-app-bar dense app clipped-left>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-            <router-link class="white--text" to="/">
-                <v-btn depressed fab text>
-                    <v-icon>home</v-icon>
-                </v-btn>
-            </router-link>
-            <v-toolbar-title>{{applicationName}}</v-toolbar-title>
+            <v-list-item-avatar>
+                <router-link v-if="!space" class="white--text" to="/">
+                    <v-btn depressed fab text small>
+                        <v-icon>home</v-icon>
+                    </v-btn>
+                </router-link>
+                <v-img class="space-icon" v-if="space" :src="space.imageUrl"></v-img>
+            </v-list-item-avatar>
+            <v-spacer></v-spacer>
+            <div class="pt-1">
+                <v-toolbar-title v-if="!space">{{applicationName}}</v-toolbar-title>
+                <v-toolbar-title v-if="space">{{space.title}}</v-toolbar-title>
+            </div>
             <v-spacer></v-spacer>
             <div>
                 <!-- show login when not authenticated -->
@@ -79,18 +91,23 @@ export default {
             ],
         };
     },
-    created() {
+    async created() {
         const userToken = authService.getTokenFromLocalStorage();
         if (userToken) {
             const userData = authService.parseJwt(userToken);
             if (authService.isTokenExpired(userData.exp)) {
                 console.log('token expired!');
-                this.$router.push('/login');
+                if (this.$router.currentRoute.name !== 'Login') {
+                    this.$router.push('/login');
+                }
             } else {
                 this.$store.dispatch('user/SET_USER', userData);
+                await this.$store.dispatch('space/GET_SPACE_BY_ID', userData.spaceId);
             }
         } else {
-            this.$router.push('/login');
+            if (this.$router.currentRoute.name !== 'Login') {
+                this.$router.push('/login');
+            }
         }
     },
     computed: {
@@ -98,12 +115,18 @@ export default {
             const user = this.$store.getters['user/GET_USER'];
             return user;
         },
+        space() {
+            return this.$store.getters['space/GET_SPACE'];
+        },
     },
     methods: {
         logout() {
             authService.logout();
             this.$store.dispatch('user/REMOVE_USER');
-            this.$router.push('/login');
+            this.$store.dispatch('space/REMOVE_SPACE');
+            if (this.$router.currentRoute.name !== 'Login') {
+                this.$router.push('/login');
+            }
         },
     },
 };
@@ -115,6 +138,12 @@ a {
     color: #fff;
 }
 .userIcon {
+    max-width: 100%;
+    width: $iconSize;
+    height: $iconSize;
+    border-radius: $iconSize;
+}
+.space-icon {
     max-width: 100%;
     width: $iconSize;
     height: $iconSize;

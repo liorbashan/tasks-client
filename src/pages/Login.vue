@@ -25,7 +25,6 @@ export default {
                 this.userData = null;
                 this.showLoginButton = true;
             } else {
-                this.userData = authService.parseJwt(this.userToken);
                 this.setUserData();
             }
         } else {
@@ -46,8 +45,9 @@ export default {
                 this.setUserData();
             }
         },
-        setUserData() {
+        async setUserData() {
             this.$store.dispatch('user/SET_USER', this.userData);
+            await this.$store.dispatch('space/GET_SPACE_BY_ID', this.userData.spaceId);
             this.$router.push('/');
         },
     },

@@ -96,24 +96,26 @@ export default {
     },
     methods: {
         async initData() {
-            // await this.$store.dispatch('tags/getAllTags');
-            // await this.$store.dispatch('projects/FETCH_ALL_PROJECTS');
-            // await this.$store.dispatch('users/FETCH_ALL_USERS');
+            // TODO: Add all initial data the app requires (if any):
         },
         initEventHandlers: function() {
             EventBus.$on('SHOW_ERROR', (payload) => {
-                // this.error.message = payload;
-                // this.error.show = true;
                 this.snackbar.message = payload;
                 this.snackbar.color = 'error';
                 this.snackbar.show = true;
             });
+            EventBus.$on('SHOW_ERROR_POPUP', (payload) => {
+                this.error.message = payload;
+                this.error.show = true;
+            });
             EventBus.$on('SHOW_SUCCESS', (payload) => {
-                // this.success.message = payload;
-                // this.success.show = true;
                 this.snackbar.message = payload;
                 this.snackbar.color = 'success';
                 this.snackbar.show = true;
+            });
+            EventBus.$on('SHOW_SUCCESS_POPUP', (payload) => {
+                this.success.message = payload;
+                this.success.show = true;
             });
             EventBus.$on('SHOW_LOADER', (payload) => {
                 if (payload) {

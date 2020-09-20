@@ -1,0 +1,54 @@
+mutation add($addInput: SpaceInput!) {
+    AddSpace(SpaceInput: $addInput) {
+        ...spaceResult
+    }
+}
+
+mutation update($updateInput: SpaceInput!) {
+    UpdateSpace(SpaceInput: $updateInput) {
+        ...spaceResult
+    }
+}
+
+query getAll($getAllSpaceInput: SpaceInput!) {
+    QuerySpaces(SpaceInput: $getAllSpaceInput) {
+        ...spaceResult
+    }
+}
+
+query getOne($getSpaceInput: SpaceInput!) {
+    GetSpace(SpaceInput: $getSpaceInput) {
+        ...spaceResult
+    }
+}
+
+fragment spaceResult on Space {
+    id
+    title
+    description
+    imageUrl
+    Users {
+        id
+        firstName
+        lastName
+        email
+        picture
+        phone
+    }
+    shoppingLists {
+        id
+        title
+        description
+        spaceId
+    }
+    Tasks {
+        id
+        title
+        description
+        spaceId
+        completed
+        completedAt
+        dueDate
+        userId
+    }
+}
