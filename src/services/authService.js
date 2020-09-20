@@ -52,6 +52,34 @@ export const getJwt = async (url, userData) => {
     // localStorage.setItem('token', jwt);
 };
 
+export const parseJwt = (token) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    /* eslint-disable function-paren-newline */
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+};
+export const isTokenExpired = (timestamp) => {
+    const expirationDate = timestamp * 1000;
+    console.log('token expiration date', new Date(expirationDate).toISOString());
+    if (Date.now() >= expirationDate) {
+        return true;
+    }
+    return false;
+};
+
+export const getTokenFromLocalStorage = () => {
+    return localStorage.getItem(tokenName) ? localStorage.getItem(tokenName) : null;
+};
+
 export const init = (config) => {
     return firebase.initializeApp(config);
 };

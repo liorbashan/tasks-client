@@ -12,6 +12,9 @@ export default {
         SET_USER: (state, user) => {
             state.user = user;
         },
+        REMOVE_USER: (state) => {
+            state.user = null;
+        },
     },
     getters: {
         GET_USER: (state) => {
@@ -19,23 +22,13 @@ export default {
         },
     },
     actions: {
-        FETCH_ALL_USERS: async ({ commit }) => {
-            let data = [];
+        SET_USER: ({ commit }, userData) => {
+            commit('SET_USER', userData);
+        },
+        REMOVE_USER: async ({ commit }) => {
             EventBus.$emit('SHOW_LOADER', 1);
-            // const result = await apollo
-            //     .query({
-            //         query: userskGQL.getAllUsers,
-            //         fetchPolicy: 'no-cache',
-            //     })
-            //     .catch((error) => {
-            //         console.log(error);
-            //     });
-            // if (result) {
-            //     data = result.data.queryUser;
-            //     commit('SET_USERS', data);
-            // }
+            commit('REMOVE_USER');
             EventBus.$emit('HIDE_LOADER', 1);
-            return data;
         },
     },
 };
