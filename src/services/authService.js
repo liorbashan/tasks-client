@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
-const tokenName = process.env.TOKEN_NAME;
+import { EventBus } from '../eventBus';
+const tokenName = process.env.VUE_APP_TOKEN_NAME;
 
 export const auth = () => {
     return firebase.auth();
@@ -12,12 +13,16 @@ export const signInWithGoogle = async () => {
         .auth()
         .signInWithPopup(provider)
         .catch((error) => {
+            debugger;
             console.log('🤕' + error.message);
+            EventBus.$emit('SHOW_ERROR', error.message);
         });
     if (googleAuthResponse) {
-        const userData = googleAuthResponse?.additionalUserInfo?.profile;
+        const userData = googleAuthResponse.additionalUserInfo.profile;
         if (userData) {
-            const jwt = await getJwt(`${process.env.SERVER_HOST}/auth/callback`, userData);
+            const jwt = await getJwt(`${process.env.VUE_APP_SERVER_HOST}/auth/callback`, userData).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
             localStorage.setItem(tokenName, jwt);
         }
     }
@@ -39,6 +44,8 @@ export const getJwt = async (url, userData) => {
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(userData), // body data type must match "Content-Type" header
+    }).catch((error) => {
+        throw error;
     });
     const jwt = await response.text();
     return jwt;

@@ -46,8 +46,8 @@
             <v-spacer></v-spacer>
             <div>
                 <!-- show login when not authenticated -->
-                <v-btn v-if="!user" depressed text>
-                    Login
+                <v-btn v-if="!user"  depressed text>
+                    <router-link class="white--text pt-1" to="/login">Login</router-link>
                     <v-icon>login</v-icon>
                 </v-btn>
                 <!-- show logout when authenticated -->
@@ -68,7 +68,6 @@ export default {
     name: 'Header',
     data() {
         return {
-            user: null,
             drawer: false,
             applicationName: process.env.VUE_APP_APPLICATION_NAME || '',
             menuItems: [
@@ -79,14 +78,14 @@ export default {
         };
     },
     created() {
-        this.user = this.$store.getters['user/GET_USER'];
+        
     },
-    // computed: {
-    //     user() {
-    //         const user = this.$store.getters['user/GET_USER'];
-    //         return user;
-    //     },
-    // },
+    computed: {
+        user() {
+            const user = this.$store.getters['user/GET_USER'];
+            return user;
+        },
+    },
     methods: {},
 };
 </script>

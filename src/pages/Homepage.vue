@@ -2,7 +2,7 @@
     <v-container justify="center" class="white pa-2" fluid>
         <v-row class="header-wrapper justify-center ma-auto">
             <v-col align="left" col="2">
-                <h1 class="black--text">{{applicationName}}</h1>
+                <h1 class="black--text">Homepage</h1>
             </v-col>
             <v-col align="right" col="2">
                 

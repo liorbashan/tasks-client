@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Homepage from '../pages/Homepage';
-import Tagspage from '../pages/Tagspage';
+import Login from '../pages/Login';
 import Epicpage from '../pages/Epicpage';
 import Projectpage from '../pages/Projectpage';
 import Userpage from '../pages/Userpage';
@@ -18,9 +18,9 @@ export default new Router({
             },
         },
         {
-            path: '/tags',
-            name: 'Tagspage',
-            component: Tagspage,
+            path: '/login',
+            name: 'Login',
+            component: Login,
         },
         {
             path: '/users',
