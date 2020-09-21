@@ -2,10 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Homepage from '../pages/Homepage';
 import Login from '../pages/Login';
-import Epicpage from '../pages/Epicpage';
-import Projectpage from '../pages/Projectpage';
-import Userpage from '../pages/Userpage';
-
+import Tasks from '../pages/Tasks';
+import ShoppingList from '../pages/ShoppingList';
 Vue.use(Router);
 
 export default new Router({
@@ -23,20 +21,14 @@ export default new Router({
             component: Login,
         },
         {
-            path: '/users',
-            name: 'Userpage',
-            component: Userpage,
+            path: '/tasks',
+            name: 'Tasks',
+            component: Tasks,
         },
         {
-            path: '/project/:id/:name',
-            name: 'Projectpage',
-            component: Projectpage,
-            props: true,
-        },
-        {
-            path: '/epic/:id/:name',
-            name: 'Epicpage',
-            component: Epicpage,
+            path: '/shoppingList',
+            name: 'ShoppingList',
+            component: ShoppingList,
             props: true,
         },
     ],

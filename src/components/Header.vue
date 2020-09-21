@@ -2,17 +2,16 @@
     <div>
         <v-navigation-drawer v-model="drawer" temporary dark app clipped>
             <v-list>
-                <v-list-item>
-                    <v-list-item-avatar>
-                        <router-link v-if="!space" class="white--text" to="/">
-                            <v-btn depressed fab text small>
-                                <v-icon>home</v-icon>
-                            </v-btn>
-                        </router-link>
-                        <v-img class="space-icon" v-if="space" :src="space.imageUrl"></v-img>
-                    </v-list-item-avatar>
+                <v-list-item pl-0>
+                    <router-link class="white--text" to="/">
+                        <v-btn v-if="!space" depressed fab text small>
+                            <v-icon>mdi-home</v-icon>
+                        </v-btn>
+                        <v-avatar width="64" height="64" v-if="space">
+                            <img :src="space.imageUrl" />
+                        </v-avatar>
+                    </router-link>
                 </v-list-item>
-
                 <v-list-item link>
                     <v-list-item-content>
                         <v-list-item-title class="title">{{applicationName}}</v-list-item-title>
@@ -21,13 +20,19 @@
                 </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list nav>
+            <v-list v-if="!user" nav>
+                <v-list-item-content>
+                    <router-link class="white--text" to="/login">
+                        <v-icon>mdi-login</v-icon>
+                        <v-btn class="white--text" depressed color="transparent" tile>login</v-btn>
+                    </router-link>
+                </v-list-item-content>
+            </v-list>
+            <v-list v-if="user" nav>
                 <v-list-item ripple link v-for="(item, i) in menuItems" :key="i">
-                    <v-list-item-icon>
-                        <v-icon v-text="item.icon"></v-icon>
-                    </v-list-item-icon>
                     <v-list-item-content>
                         <router-link class="white--text" :to="item.link">
+                            <v-icon v-text="item.icon"></v-icon>
                             <v-btn
                                 class="white--text"
                                 depressed
@@ -43,12 +48,14 @@
         <v-app-bar dense app clipped-left>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
             <v-list-item-avatar>
-                <router-link v-if="!space" class="white--text" to="/">
-                    <v-btn depressed fab text small>
-                        <v-icon>home</v-icon>
+                <router-link class="white--text" to="/">
+                    <v-btn v-if="!space" depressed fab text small>
+                        <v-icon>mdi-home</v-icon>
                     </v-btn>
+                    <v-avatar width="32" height="32" v-if="space">
+                        <img :src="space.imageUrl" />
+                    </v-avatar>
                 </router-link>
-                <v-img class="space-icon" v-if="space" :src="space.imageUrl"></v-img>
             </v-list-item-avatar>
             <v-spacer></v-spacer>
             <div class="pt-1">
@@ -60,14 +67,16 @@
                 <!-- show login when not authenticated -->
                 <v-btn v-if="!user" depressed text>
                     <router-link class="white--text pt-1" to="/login">Login</router-link>
-                    <v-icon>login</v-icon>
+                    <v-icon>mdi-login</v-icon>
                 </v-btn>
                 <!-- show logout when authenticated -->
                 <div v-if="user">
-                    <v-btn depressed fab text>
-                        <img class="userIcon" :src="user.picture" />
+                    <v-avatar width="32" height="32">
+                        <img :src="user.picture" />
+                    </v-avatar>
+                    <v-btn depressed x-small @click="logout()">
+                        <v-icon>mdi-logout</v-icon>
                     </v-btn>
-                    <v-btn depressed text small @click="logout()">Logout</v-btn>
                 </div>
             </div>
         </v-app-bar>
@@ -85,9 +94,9 @@ export default {
             drawer: false,
             applicationName: process.env.VUE_APP_APPLICATION_NAME || '',
             menuItems: [
-                { text: 'Home', icon: 'home', link: '/' },
-                { text: 'Tags', icon: 'local_offer', link: '/tags' },
-                { text: 'Users', icon: 'group', link: '/users' },
+                { text: 'Home', icon: 'mdi-home-outline', link: '/' },
+                { text: 'Shopping List', icon: 'mdi-cart-outline', link: '/shoppingList' },
+                { text: 'Tasks', icon: 'mdi-clipboard-list-outline', link: '/tasks' },
             ],
         };
     },
