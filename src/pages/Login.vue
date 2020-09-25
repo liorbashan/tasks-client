@@ -27,6 +27,7 @@ export default {
                 this.showLoginButton = true;
             } else {
                 this.setUserData();
+                this.$router.push('/');
             }
         } else {
             this.showLoginButton = true;
@@ -37,6 +38,7 @@ export default {
             this.userToken = authService.getTokenFromLocalStorage();
         },
         async login() {
+            EventBus.$emit('SHOW_LOADER', 1);
             await authService.signInWithGoogle().catch((error) => {
                 console.log(error.message);
                 EventBus.$emit('SHOW_ERROR', error.message);
@@ -46,15 +48,14 @@ export default {
                 this.userData = authService.parseJwt(this.userToken);
                 this.setUserData();
             }
+            EventBus.$emit('HIDE_LOADER', 1);
+            this.$router.push('/');
         },
         async setUserData() {
-            EventBus.$emit('SHOW_LOADER', 1);
             this.$store.dispatch('user/SET_USER', this.userData);
             if (this.userData.spaceId) {
                 await this.$store.dispatch('space/GET_SPACE_BY_ID', this.userData.spaceId);
             }
-            EventBus.$emit('HIDE_LOADER', 1);
-            this.$router.push('/');
         },
     },
 };

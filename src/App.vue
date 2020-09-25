@@ -49,6 +49,7 @@
             v-model="snackbar.show"
         >
             {{ snackbar.message }}
+            <br>
             <v-btn text @click="snackbar.show = false">Close</v-btn>
         </v-snackbar>
     </v-app>
@@ -81,7 +82,7 @@ export default {
                 show: false,
                 message: 'snackbar',
                 color: 'red darken-1',
-                timeout: 7000,
+                timeout: 10000,
             },
         };
     },

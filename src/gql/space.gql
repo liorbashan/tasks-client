@@ -10,7 +10,7 @@ mutation update($updateInput: SpaceInput!) {
     }
 }
 
-query getAll($getAllSpaceInput: SpaceInput!) {
+query getAll($getAllSpaceInput: SpaceInput) {
     QuerySpaces(SpaceInput: $getAllSpaceInput) {
         ...spaceResult
     }

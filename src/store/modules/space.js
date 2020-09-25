@@ -1,7 +1,5 @@
-import apollo from '../../apolloClient';
-import spaceGQL from '../../gql/space.gql';
 import { EventBus } from '@/eventBus';
-// const _ = require('lodash');
+import * as spaceService from '../../services/spaceService';
 
 export default {
     namespaced: true,
@@ -20,19 +18,9 @@ export default {
         GET_SPACE_BY_ID: async ({ commit }, spaceId) => {
             let space = null;
             EventBus.$emit('SHOW_LOADER', 1);
-            const result = await apollo
-                .query({
-                    query: spaceGQL.getOne,
-                    fetchPolicy: 'no-cache',
-                    variables: {
-                        getSpaceInput: {
-                            id: spaceId,
-                        },
-                    },
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            const result = await spaceService.getSpaceById(spaceId).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
             if (result) {
                 space = result.data.GetSpace;
             }

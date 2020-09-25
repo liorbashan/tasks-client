@@ -6,7 +6,7 @@
             </v-col>
         </v-row>
         <v-divider light></v-divider>
-        <v-row v-if="spaceId" class="justify-center align-content-space-around">
+        <v-row v-if="spaceId" class="justify-center ma-auto">
             <router-link to="/shoppingList">
                 <v-icon class="box" size="200" color="light-blue darken-1">mdi-cart-outline</v-icon>
             </router-link>
@@ -18,9 +18,30 @@
                 >mdi-clipboard-list-outline</v-icon>
             </router-link>
         </v-row>
-        <v-row v-else class="justify-center align-content-space-around">
+        <v-row v-else class="justify-center ma-auto">
             <v-col>
-                <h3>You are not part of any space. Please join a space</h3>
+                <h3>Seems like you are not part of any space.</h3>
+                <h5>Please join a space to use the Shopping and Task lists:</h5>
+                <v-form
+                    class="mt-3"
+                    ref="selectSpaceForm"
+                    @keydown.native.esc="close()"
+                    v-model="spaceSelectionFormValid"
+                    lazy-validation
+                >
+                    <v-col class="pa-0" cols="6">
+                        <v-select
+                            light
+                            outlined
+                            dense
+                            :items="spacesList"
+                            item-text="title"
+                            item-value="id"
+                            label="Select Space:"
+                            :rules="requiredRule"
+                        ></v-select>
+                    </v-col>
+                </v-form>
             </v-col>
         </v-row>
     </v-container>
@@ -30,13 +51,17 @@
 import ConfirmBox from '../components/ConfirmBox';
 import { EventBus } from '../eventBus';
 import { mapGetters } from 'vuex';
+import * as spaceService from '../services/spaceService';
+import space from '../store/modules/space';
 export default {
     name: 'Homepage',
     components: {},
     data() {
         return {
+            spaceSelectionFormValid: false,
             applicationName: process.env.VUE_APP_APPLICATION_NAME || '',
-            spaceId: null,
+            spacesList: [],
+            requiredRule: [(v) => !!v || 'Name is required'],
         };
     },
     computed: {
@@ -44,8 +69,18 @@ export default {
             const user = this.$store.getters['user/GET_USER'];
             return user ? `${user.firstName} ${user.lastName}` : '';
         },
+        spaceId() {
+            return this.user.spaceId;
+        },
     },
-    created() {},
+    async created() {
+        if (!this.spaceId) {
+            this.spacesList = await spaceService.getAllSpaces().catch((error) => {
+                EventBus.$emit('SHOW_ERROR', `Failed to load spaces list: ${error.message}`);
+            });
+            console.log(this.spacesList);
+        }
+    },
     methods: {},
 };
 </script>
@@ -60,5 +95,9 @@ export default {
     border-radius: 32px;
     padding: 16px;
     margin: 8px;
+}
+h3,
+h5 {
+    font-weight: 400;
 }
 </style>

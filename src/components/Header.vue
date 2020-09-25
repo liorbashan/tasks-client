@@ -72,7 +72,7 @@
                 <!-- show logout when authenticated -->
                 <div v-if="user">
                     <v-avatar width="32" height="32">
-                        <img :src="user.picture" />
+                        <img referrerpolicy="no-referrer" :src="user.picture" />
                     </v-avatar>
                     <v-btn depressed x-small @click="logout()">
                         <v-icon>mdi-logout</v-icon>
