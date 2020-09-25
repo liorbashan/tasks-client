@@ -28,6 +28,18 @@ export default {
             EventBus.$emit('HIDE_LOADER', 1);
             return space;
         },
+        UPDATE_SPACE: async ({ commit }, updateInput) => {
+            let space = null;
+            EventBus.$emit('SHOW_LOADER', 1);
+            const result = await spaceService.updateSpace(updateInput).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            if (result) {
+                commit('SET_SPACE', result);
+            }
+            EventBus.$emit('HIDE_LOADER', 1);
+            return space;
+        },
         REMOVE_SPACE: ({ commit }) => {
             commit('REMOVE_SPACE');
         },

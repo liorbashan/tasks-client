@@ -8,7 +8,7 @@
                             <v-icon>mdi-home</v-icon>
                         </v-btn>
                         <v-avatar width="64" height="64" v-if="space">
-                            <img :src="space.imageUrl" />
+                            <img referrerpolicy="no-referrer" :src="space.imageUrl" />
                         </v-avatar>
                     </router-link>
                 </v-list-item>
@@ -53,7 +53,7 @@
                         <v-icon>mdi-home</v-icon>
                     </v-btn>
                     <v-avatar width="32" height="32" v-if="space">
-                        <img :src="space.imageUrl" />
+                        <img referrerpolicy="no-referrer" :src="space.imageUrl" />
                     </v-avatar>
                 </router-link>
             </v-list-item-avatar>

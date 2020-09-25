@@ -1,7 +1,5 @@
-// import apollo from '../../apolloClient';
-// import userskGQL from '../../gql/users.gql';
 import { EventBus } from '@/eventBus';
-const _ = require('lodash');
+import * as userService from '../../services/userService';
 
 export default {
     namespaced: true,
@@ -29,6 +27,18 @@ export default {
             EventBus.$emit('SHOW_LOADER', 1);
             commit('REMOVE_USER');
             EventBus.$emit('HIDE_LOADER', 1);
+        },
+        UPDATE_USER: async ({ commit }, updateInput) => {
+            let user = null;
+            EventBus.$emit('SHOW_LOADER', 1);
+            const result = await userService.updateUser(updateInput).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            if (result) {
+                commit('SET_USER', result);
+            }
+            EventBus.$emit('HIDE_LOADER', 1);
+            return user;
         },
     },
 };

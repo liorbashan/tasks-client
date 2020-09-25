@@ -2,7 +2,8 @@
     <v-container justify="center" class="white pa-2" fluid>
         <v-row class="header-wrapper justify-center ma-auto">
             <v-col align="left" col="2">
-                <h4 class="black--text">Hi, {{user}}</h4>
+                <h4 v-if="user" class="black--text">Hi, {{user.firstName}} {{user.lastName}}</h4>
+                <h4 v-else class="black--text">Welcome</h4>
             </v-col>
         </v-row>
         <v-divider light></v-divider>
@@ -19,28 +20,45 @@
             </router-link>
         </v-row>
         <v-row v-else class="justify-center ma-auto">
-            <v-col>
+            <v-col v-if="!user">
+                <router-link class="white--text" to="/login">
+                    <v-icon>mdi-login</v-icon>
+                    <v-btn class="white--text" depressed>login</v-btn>
+                </router-link>
+            </v-col>
+            <v-col v-else>
                 <h3>Seems like you are not part of any space.</h3>
                 <h5>Please join a space to use the Shopping and Task lists:</h5>
                 <v-form
                     class="mt-3"
                     ref="selectSpaceForm"
-                    @keydown.native.esc="close()"
                     v-model="spaceSelectionFormValid"
                     lazy-validation
                 >
-                    <v-col class="pa-0" cols="6">
-                        <v-select
-                            light
-                            outlined
-                            dense
-                            :items="spacesList"
-                            item-text="title"
-                            item-value="id"
-                            label="Select Space:"
-                            :rules="requiredRule"
-                        ></v-select>
-                    </v-col>
+                    <v-row class="justify-start">
+                        <v-col class="p-auto" cols="7">
+                            <v-select
+                                light
+                                outlined
+                                dense
+                                :items="spacesList"
+                                item-text="title"
+                                item-value="id"
+                                label="Select Space:"
+                                :rules="requiredRule"
+                                v-model="selectedSpaceId"
+                            ></v-select>
+                        </v-col>
+                        <v-col class="p-auto" cols="4">
+                            <v-btn
+                                light
+                                :disabled="!spaceSelectionFormValid"
+                                color="success"
+                                depressed
+                                @click="joinSpace()"
+                            >Join Space</v-btn>
+                        </v-col>
+                    </v-row>
                 </v-form>
             </v-col>
         </v-row>
@@ -50,7 +68,6 @@
 <script>
 import ConfirmBox from '../components/ConfirmBox';
 import { EventBus } from '../eventBus';
-import { mapGetters } from 'vuex';
 import * as spaceService from '../services/spaceService';
 import space from '../store/modules/space';
 export default {
@@ -59,18 +76,18 @@ export default {
     data() {
         return {
             spaceSelectionFormValid: false,
+            selectedSpaceId: null,
             applicationName: process.env.VUE_APP_APPLICATION_NAME || '',
             spacesList: [],
-            requiredRule: [(v) => !!v || 'Name is required'],
+            requiredRule: [(v) => !!v || 'required'],
         };
     },
     computed: {
         user() {
-            const user = this.$store.getters['user/GET_USER'];
-            return user ? `${user.firstName} ${user.lastName}` : '';
+            return this.$store.getters['user/GET_USER'];
         },
         spaceId() {
-            return this.user.spaceId;
+            return this.user ? this.user.spaceId : null;
         },
     },
     async created() {
@@ -78,10 +95,19 @@ export default {
             this.spacesList = await spaceService.getAllSpaces().catch((error) => {
                 EventBus.$emit('SHOW_ERROR', `Failed to load spaces list: ${error.message}`);
             });
-            console.log(this.spacesList);
         }
     },
-    methods: {},
+    methods: {
+        async joinSpace() {
+            if (this.$refs.selectSpaceForm.validate()) {
+                const updatePayload = {
+                    email: this.user.email,
+                    spaceId: this.selectedSpaceId,
+                };
+                await this.$store.dispatch('user/UPDATE_USER', updatePayload);
+            }
+        },
+    },
 };
 </script>
 
