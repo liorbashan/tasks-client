@@ -45,7 +45,7 @@ export default {
         },
     },
     getters: {
-        GET_SPACE: (state) => {
+        GET_USER_SPACE: (state) => {
             return state.space;
         },
     },

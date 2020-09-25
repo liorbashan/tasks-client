@@ -6,7 +6,7 @@
             </v-col>
         </v-row>
         <v-divider light></v-divider>
-        <v-row class="justify-center align-content-space-around">
+        <v-row v-if="spaceId" class="justify-center align-content-space-around">
             <router-link to="/shoppingList">
                 <v-icon class="box" size="200" color="light-blue darken-1">mdi-cart-outline</v-icon>
             </router-link>
@@ -17,6 +17,11 @@
                     color="deep-orange darken-1"
                 >mdi-clipboard-list-outline</v-icon>
             </router-link>
+        </v-row>
+        <v-row v-else class="justify-center align-content-space-around">
+            <v-col>
+                <h3>You are not part of any space. Please join a space</h3>
+            </v-col>
         </v-row>
     </v-container>
 </template>
@@ -36,7 +41,7 @@ export default {
     },
     computed: {
         user() {
-            const user = this.$store.getters['user/GET_USER'];;
+            const user = this.$store.getters['user/GET_USER'];
             return user ? `${user.firstName} ${user.lastName}` : '';
         },
     },

@@ -111,7 +111,9 @@ export default {
                 }
             } else {
                 this.$store.dispatch('user/SET_USER', userData);
-                await this.$store.dispatch('space/GET_SPACE_BY_ID', userData.spaceId);
+                if (userData.spaceId) {
+                    await this.$store.dispatch('space/GET_SPACE_BY_ID', userData.spaceId);
+                }
             }
         } else {
             if (this.$router.currentRoute.name !== 'Login') {
@@ -125,7 +127,7 @@ export default {
             return user;
         },
         space() {
-            return this.$store.getters['space/GET_SPACE'];
+            return this.$store.getters['space/GET_USER_SPACE'];
         },
     },
     methods: {
