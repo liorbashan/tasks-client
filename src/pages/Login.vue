@@ -5,6 +5,7 @@
     </v-container>
 </template>
 <script>
+import { EventBus } from '@/eventBus';
 import * as authService from '../services/authService';
 export default {
     name: 'Login',
@@ -38,6 +39,7 @@ export default {
         async login() {
             await authService.signInWithGoogle().catch((error) => {
                 console.log(error.message);
+                EventBus.$emit('SHOW_ERROR', error.message);
             });
             this.getTokenFromLocalStorage();
             if (this.userToken) {
@@ -46,8 +48,12 @@ export default {
             }
         },
         async setUserData() {
+            EventBus.$emit('SHOW_LOADER', 1);
             this.$store.dispatch('user/SET_USER', this.userData);
-            await this.$store.dispatch('space/GET_SPACE_BY_ID', this.userData.spaceId);
+            if (this.userData.spaceId) {
+                await this.$store.dispatch('space/GET_SPACE_BY_ID', this.userData.spaceId);
+            }
+            EventBus.$emit('HIDE_LOADER', 1);
             this.$router.push('/');
         },
     },
