@@ -1,18 +1,17 @@
 <template>
-    <v-container class="pa-2 white align-start" fill-height fluid>
-        <v-row class="header-wrapper justify-center ma-auto">
-            <v-col align="left" col="2">
+    <v-container class="pa-2 white" fluid>
+        <v-row class="">
+            <v-col align="left" col="12">
                 <h4 v-if="user" class="black--text">Hi, {{ user.firstName }} {{ user.lastName }}</h4>
                 <h4 v-else class="black--text">Welcome</h4>
             </v-col>
         </v-row>
         <v-divider light></v-divider>
-        <v-row v-if="spaceId" class="justify-center ma-auto">
-            <router-link to="/shoppingList">
-                <v-icon class="box" size="200" color="light-blue darken-1">mdi-cart-outline</v-icon>
-            </router-link>
-            <router-link to="/tasks">
-                <v-icon class="box" size="200" color="deep-orange darken-1">mdi-clipboard-list-outline</v-icon>
+        <v-row v-if="spaceId" class="justify-center">
+            <router-link :to="{ name: 'Space', params: { id: spaceId }}">
+                <v-btn>
+                    <v-icon>mdi-table-arrow-left</v-icon>
+                </v-btn>
             </router-link>
         </v-row>
         <v-row v-else class="justify-center ma-auto">
@@ -38,10 +37,9 @@
 </template>
 
 <script>
-import ConfirmBox from '../components/ConfirmBox';
 import { EventBus } from '../eventBus';
 import * as spaceService from '../services/spaceService';
-import space from '../store/modules/space';
+// import space from '../store/modules/space';
 export default {
     name: 'Homepage',
     components: {},

@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Homepage from '../pages/Homepage';
-import Tasks from '../pages/Tasks';
-import ShoppingList from '../pages/ShoppingList';
+import SpacePage from '../pages/SpacePage';
 
 Vue.use(Router);
 
@@ -16,16 +15,10 @@ export default new Router({
             component: Homepage,
         },
         {
-            path: '/tasks',
-            name: 'Tasks',
+            path: '/space/:id',
+            name: 'Space',
             meta: { layout: 'app' },
-            component: Tasks,
-        },
-        {
-            path: '/shoppingList',
-            name: 'ShoppingList',
-            meta: { layout: 'app' },
-            component: ShoppingList,
+            component: SpacePage,
             props: true,
         },
     ],

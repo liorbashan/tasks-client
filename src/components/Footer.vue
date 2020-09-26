@@ -1,5 +1,5 @@
 <template>
-    <v-footer class="footer" width="100%">
+    <v-footer class="footer" absolute width="100%">
         <span>&copy; 2020</span>
     </v-footer>
 </template>

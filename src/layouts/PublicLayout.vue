@@ -1,5 +1,5 @@
 <template>
-    <v-container class="pa-0 white align-start" fill-height fluid>
+    <v-container class="pa-0 white" fluid>
         <Header />
         <slot />
         <Footer />
