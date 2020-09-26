@@ -5,8 +5,12 @@ import store from './store';
 import apollo from './apolloClient';
 import vuetify from './plugins/vuetify';
 import firebase from 'firebase';
+import AppLayout from './layouts/AppLayout';
+import PublicLayout from './layouts/PublicLayout';
 
 // Import the plugin here
+Vue.component('PublicLayout', PublicLayout);
+Vue.component('AppLayout', AppLayout);
 
 Vue.config.productionTip = false;
 Vue.prototype.$apollo = apollo;

@@ -1,5 +1,5 @@
 <template>
-    <v-footer>
+    <v-footer class="footer" width="100%">
         <span>&copy; 2020</span>
     </v-footer>
 </template>
@@ -10,5 +10,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.footer{
+    width: 100%;
+}
 </style>

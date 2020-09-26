@@ -1,5 +1,5 @@
 <template>
-    <v-container justify="center" class="white pa-2" fluid>
+    <v-container class="pa-2 white align-start" fill-height fluid>
         <v-row class="header-wrapper justify-center ma-auto">
             <v-col align="left" col="2">
                 <h4 v-if="user" class="black--text">Hi, {{ user.firstName }} {{ user.lastName }}</h4>

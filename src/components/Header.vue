@@ -132,17 +132,24 @@ export default {
             }
         },
         async getUser() {
-            const userToken = authService.getTokenFromLocalStorage();
-            const userData = authService.parseJwt(userToken);
-            const fetchUserPayload = { email: userData.email };
-            const user = await this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
-                console.log(error.message);
-                EventBus.$emit('SHOW_ERROR', error.message);
-            });
+            let user = null;
+            if (!this.user) {
+                const userToken = authService.getTokenFromLocalStorage();
+                const userData = authService.parseJwt(userToken);
+                const fetchUserPayload = { email: userData.email };
+                user = await this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
+                    console.log(error.message);
+                    EventBus.$emit('SHOW_ERROR', error.message);
+                });
+            } else {
+                user = this.user;
+            }
             this.authenticated = true;
-            if (user.spaceId) {
-                const getSpacePayload = { id: user.spaceId };
-                await this.$store.dispatch('space/FETCH_SPACE', getSpacePayload);
+            if (!this.space) {
+                if (user.spaceId) {
+                    const getSpacePayload = { id: user.spaceId };
+                    await this.$store.dispatch('space/FETCH_SPACE', getSpacePayload);
+                }
             }
         },
     },
