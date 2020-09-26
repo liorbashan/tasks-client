@@ -22,10 +22,7 @@
             <v-divider></v-divider>
             <v-list v-if="!user" nav>
                 <v-list-item-content>
-                    <router-link class="white--text" to="/login">
-                        <v-icon>mdi-login</v-icon>
-                        <v-btn class="white--text" depressed color="transparent" tile>login</v-btn>
-                    </router-link>
+                    <v-btn class="white--text" @click="login()" depressed color="transparent" tile>login</v-btn>
                 </v-list-item-content>
             </v-list>
             <v-list v-if="user" nav>
