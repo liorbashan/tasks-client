@@ -1,9 +1,6 @@
 import ApolloClient from 'apollo-boost';
 import * as authService from './services/authService';
 
-let userToken = authService.getTokenFromLocalStorage() ? authService.getTokenFromLocalStorage() : 'token';
-userToken = userToken.slice(1, -1);
-
 const defaultOptions = {
     watchQuery: {
         fetchPolicy: 'no-cache',
@@ -14,8 +11,13 @@ const defaultOptions = {
 };
 export default new ApolloClient({
     uri: process.env.VUE_APP_GRAPHQL_URL,
-    headers: {
-        authorization: `Bearer ${userToken}`,
+    request: (operation) => {
+        const token = authService.getTokenFromLocalStorage();
+        operation.setContext({
+            headers: {
+                authorization: token ? `Bearer ${token}` : '',
+            },
+        });
     },
     defaultOptions,
     cache: null,

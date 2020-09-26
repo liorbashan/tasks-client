@@ -14,8 +14,8 @@
                 </v-list-item>
                 <v-list-item link>
                     <v-list-item-content>
-                        <v-list-item-title class="title">{{applicationName}}</v-list-item-title>
-                        <v-list-item-subtitle v-if="space">{{space.title}}</v-list-item-subtitle>
+                        <v-list-item-title class="title">{{ applicationName }}</v-list-item-title>
+                        <v-list-item-subtitle v-if="space">{{ space.title }}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -33,12 +33,7 @@
                     <v-list-item-content>
                         <router-link class="white--text" :to="item.link">
                             <v-icon v-text="item.icon"></v-icon>
-                            <v-btn
-                                class="white--text"
-                                depressed
-                                color="transparent"
-                                tile
-                            >{{item.text}}</v-btn>
+                            <v-btn class="white--text" depressed color="transparent" tile>{{ item.text }}</v-btn>
                         </router-link>
                     </v-list-item-content>
                 </v-list-item>
@@ -59,14 +54,14 @@
             </v-list-item-avatar>
             <v-spacer></v-spacer>
             <div class="pt-1">
-                <v-toolbar-title v-if="!space">{{applicationName}}</v-toolbar-title>
-                <v-toolbar-title v-if="space">{{space.title}}</v-toolbar-title>
+                <v-toolbar-title v-if="!space">{{ applicationName }}</v-toolbar-title>
+                <v-toolbar-title v-if="space">{{ space.title }}</v-toolbar-title>
             </div>
             <v-spacer></v-spacer>
             <div>
                 <!-- show login when not authenticated -->
-                <v-btn v-if="!user" depressed text>
-                    <router-link class="white--text pt-1" to="/login">Login</router-link>
+                <v-btn v-if="!authenticated" @click="login()" depressed text>
+                    Login
                     <v-icon>mdi-login</v-icon>
                 </v-btn>
                 <!-- show logout when authenticated -->
@@ -90,6 +85,7 @@ export default {
     name: 'Header',
     data() {
         return {
+            authenticated: false,
             tokenName: process.env.VUE_APP_TOKEN_NAME,
             drawer: false,
             applicationName: process.env.VUE_APP_APPLICATION_NAME || '',
@@ -103,40 +99,53 @@ export default {
     async created() {
         const userToken = authService.getTokenFromLocalStorage();
         if (userToken) {
-            const userData = authService.parseJwt(userToken);
-            if (authService.isTokenExpired(userData.exp)) {
-                console.log('token expired!');
-                if (this.$router.currentRoute.name !== 'Login') {
-                    this.$router.push('/login');
-                }
-            } else {
-                this.$store.dispatch('user/SET_USER', userData);
-                if (userData.spaceId) {
-                    await this.$store.dispatch('space/GET_SPACE_BY_ID', userData.spaceId);
-                }
-            }
+            this.getUser();
         } else {
-            if (this.$router.currentRoute.name !== 'Login') {
-                this.$router.push('/login');
-            }
+            this.authenticated = false;
         }
     },
     computed: {
         user() {
-            const user = this.$store.getters['user/GET_USER'];
-            return user;
+            return this.$store.getters['user/GET_USER'];
         },
         space() {
-            return this.$store.getters['space/GET_USER_SPACE'];
+            return this.$store.getters['space/GET_SPACE'];
         },
     },
     methods: {
+        async login() {
+            EventBus.$emit('SHOW_LOADER', 1);
+            await authService.signInWithGoogle().catch((error) => {
+                console.log(error.message);
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            const userToken = authService.getTokenFromLocalStorage();
+            if (userToken) {
+                this.getUser();
+            }
+            EventBus.$emit('HIDE_LOADER', 1);
+        },
         logout() {
             authService.logout();
             this.$store.dispatch('user/REMOVE_USER');
             this.$store.dispatch('space/REMOVE_SPACE');
-            if (this.$router.currentRoute.name !== 'Login') {
-                this.$router.push('/login');
+            this.authenticated = false;
+            if (this.$router.currentRoute.name !== 'Home') {
+                this.$router.push('/');
+            }
+        },
+        async getUser() {
+            const userToken = authService.getTokenFromLocalStorage();
+            const userData = authService.parseJwt(userToken);
+            const fetchUserPayload = { email: userData.email };
+            const user = await this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
+                console.log(error.message);
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            this.authenticated = true;
+            if (user.spaceId) {
+                const getSpacePayload = { id: user.spaceId };
+                await this.$store.dispatch('space/FETCH_SPACE', getSpacePayload);
             }
         },
     },

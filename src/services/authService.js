@@ -47,7 +47,7 @@ export const getJwt = async (url, userData) => {
     }).catch((error) => {
         throw error;
     });
-    const jwt = await response.text();
+    const jwt = await response.json();
     return jwt;
     // localStorage.setItem('token', jwt);
 };

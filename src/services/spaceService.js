@@ -1,21 +1,22 @@
 import apollo from '../apolloClient';
 import spaceGQL from '../gql/space.gql';
 
-export const getSpaceById = async (spaceId) => {
-    const result = await apollo
+export const getOne = async (getSpaceInput) => {
+    let result = null;
+    const response = await apollo
         .query({
             query: spaceGQL.getOne,
             fetchPolicy: 'no-cache',
             variables: {
-                getSpaceInput: {
-                    id: spaceId,
-                },
+                getSpaceInput,
             },
         })
         .catch((error) => {
-            console.log(error);
             throw new Error(error);
         });
+    if (response) {
+        result = response.data.GetSpace;
+    }
     return result;
 };
 

@@ -20,8 +20,18 @@ export default {
         },
     },
     actions: {
-        SET_USER: ({ commit }, userData) => {
-            commit('SET_USER', userData);
+        FETCH_USER: async ({ commit }, getInput) => {
+            let user = null;
+            EventBus.$emit('SHOW_LOADER', 1);
+            const result = await userService.getUser(getInput).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            if (result) {
+                user = result;
+                commit('SET_USER', user);
+            }
+            EventBus.$emit('HIDE_LOADER', 1);
+            return user;
         },
         REMOVE_USER: async ({ commit }) => {
             EventBus.$emit('SHOW_LOADER', 1);
@@ -35,7 +45,8 @@ export default {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
             if (result) {
-                commit('SET_USER', result);
+                user = result;
+                commit('SET_USER', user);
             }
             EventBus.$emit('HIDE_LOADER', 1);
             return user;

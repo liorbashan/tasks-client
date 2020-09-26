@@ -15,14 +15,14 @@ export default {
         },
     },
     actions: {
-        GET_SPACE_BY_ID: async ({ commit }, spaceId) => {
+        FETCH_SPACE: async ({ commit }, getSpaceInput) => {
             let space = null;
             EventBus.$emit('SHOW_LOADER', 1);
-            const result = await spaceService.getSpaceById(spaceId).catch((error) => {
+            const result = await spaceService.getOne(getSpaceInput).catch((error) => {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
             if (result) {
-                space = result.data.GetSpace;
+                space = result;
             }
             commit('SET_SPACE', space);
             EventBus.$emit('HIDE_LOADER', 1);
@@ -35,8 +35,9 @@ export default {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
             if (result) {
-                commit('SET_SPACE', result);
+                space = result;
             }
+            commit('SET_SPACE', space);
             EventBus.$emit('HIDE_LOADER', 1);
             return space;
         },
@@ -45,7 +46,7 @@ export default {
         },
     },
     getters: {
-        GET_USER_SPACE: (state) => {
+        GET_SPACE: (state) => {
             return state.space;
         },
     },
