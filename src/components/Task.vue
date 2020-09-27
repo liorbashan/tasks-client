@@ -14,9 +14,33 @@
             <div class="duedate grey--text font-italic">{{ task.dueDate | dateFormat(task.dueDate) }}</div>
         </v-list-item-action>
         <v-list-item-icon class="task-menu align-self-start ma-0">
-            <v-btn x-small icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
+            <v-menu light bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" x-small icon>
+                        <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                </template>
+                <v-list dense>
+                    <v-list-item>
+                        <v-list-item-icon class="mr-1">
+                            <v-icon small>mdi-checkbox-marked-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content class="task-menu-option">Done</v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-icon class="mr-1">
+                            <v-icon small>mdi-pencil</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content class="task-menu-option">Edit</v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-icon class="mr-1">
+                            <v-icon small>mdi-trash-can-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content class="task-menu-option">Delete</v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </v-list-item-icon>
     </v-list-item>
 </template>
@@ -72,5 +96,11 @@ export default {
 }
 .task-menu.align-self-start.ma-0 {
     margin-top: 0px !important;
+}
+.mr-1.task-menu-icon {
+    margin-right: 4px !important;
+}
+.task-menu-option {
+    margin-top: 2px;
 }
 </style>

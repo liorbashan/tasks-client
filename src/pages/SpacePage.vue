@@ -41,14 +41,14 @@
                     </v-app-bar>
                     <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
-
                 <v-card-text class="white">
+                    <v-btn fab absolute bottom right color="indigo">
+                        <v-icon>mdi-plus</v-icon>
+                    </v-btn>
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
-                            <Task :task="item" /><!-- task -->
-                            <v-divider></v-divider>
-                            <!-- task -->
+                            <Task :task="item" />
                             <v-divider></v-divider>
                         </v-list>
                     </div>
