@@ -52,11 +52,8 @@
 <script>
 import { EventBus } from './eventBus';
 const default_Layout = 'public';
-// import Header from './components/Header';
-// import Footer from './components/Footer';
 export default {
     name: 'App',
-    // components: { Header, Footer },
     data() {
         return {
             drawer: false,
@@ -157,22 +154,10 @@ div#inspire {
     font-family: 'Baloo Tamma 2', cursive;
     color: #000;
 }
-#confirmTitle {
-    font-family: 'Baloo Tamma 2', cursive !important;
-    color: #fff !important;
-}
 a {
     text-decoration: none;
 }
-.empty-list-message {
-    color: gray;
-    text-align: center;
-    h2 {
-        font-size: 3em;
-    }
-    h4 {
-        font-size: 1.2em;
-        font-weight: 300;
-    }
+.inherit-width{
+    width: inherit;
 }
 </style>

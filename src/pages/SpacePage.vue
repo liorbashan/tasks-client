@@ -1,6 +1,6 @@
 <template>
     <v-container class="pa-0 white align-start" fill-height fluid>
-        <v-row justify="space-around">
+        <div class="inherit-width">
             <v-navigation-drawer v-model="drawer" color="white" light temporary app>
                 <v-list v-if="user">
                     <v-list-item class="px-2">
@@ -30,7 +30,7 @@
                     </router-link>
                 </v-list>
             </v-navigation-drawer>
-            <v-card flat width="100%">
+            <v-card class="inherit-width" style="width:inherit" flat>
                 <v-img v-if="space" height="150px" referrerpolicy="no-referrer" :src="space.imageUrl">
                     <v-app-bar dense prominent flat color="rgba(0, 0, 0, 0)">
                         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -42,8 +42,8 @@
                     <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
 
-                <v-card-text class="white" color="white">
-                    <div class="font-weight-bold black--text">Tasks List</div>
+                <v-card-text class="white">
+                    <h2 class="text-left text-body-1 black--text">All Tasks</h2>
                     <v-list light>
                         <v-list-item>
                             <v-list-item-icon>
@@ -68,7 +68,7 @@
                     </v-list>
                 </v-card-text>
             </v-card>
-        </v-row>
+        </div>
     </v-container>
 </template>
 

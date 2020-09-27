@@ -1,38 +1,46 @@
 <template>
-    <v-container class="pa-2 white" fluid>
-        <v-row class="">
-            <v-col align="left" col="12">
-                <h4 v-if="user" class="black--text">Hi, {{ user.firstName }} {{ user.lastName }}</h4>
-                <h4 v-else class="black--text">Welcome</h4>
-            </v-col>
-        </v-row>
+    <v-container class="pa-0 white" fluid>
+        <!-- Greeting -->
+        <div class="inherit-width pa-2">
+            <h4 v-if="user" class="black--text">Hi, {{ user.firstName }} {{ user.lastName }}</h4>
+            <h4 v-else class="black--text">Welcome</h4>
+        </div>
         <v-divider light></v-divider>
-        <v-row v-if="spaceId" class="justify-center">
-            <router-link :to="{ name: 'Space', params: { id: spaceId }}">
-                <v-btn>
-                    <v-icon>mdi-table-arrow-left</v-icon>
-                </v-btn>
-            </router-link>
-        </v-row>
-        <v-row v-else class="justify-center ma-auto">
-            <v-col v-if="!user">
-                <h3>Please login</h3>
-            </v-col>
-            <v-col v-else>
-                <h3>Seems like you are not part of any space.</h3>
-                <h5>Please join a space to use the Shopping and Task lists:</h5>
-                <v-form class="mt-3" ref="selectSpaceForm" v-model="spaceSelectionFormValid" lazy-validation>
-                    <v-row class="justify-start">
-                        <v-col class="p-auto" cols="7">
-                            <v-select light outlined dense :items="spacesList" item-text="title" item-value="id" label="Select Space:" :rules="requiredRule" v-model="selectedSpaceId"></v-select>
-                        </v-col>
-                        <v-col class="p-auto" cols="4">
-                            <v-btn light :disabled="!spaceSelectionFormValid" color="success" depressed @click="joinSpace()">Join Space</v-btn>
-                        </v-col>
-                    </v-row>
-                </v-form>
-            </v-col>
-        </v-row>
+        <!-- Content -->
+        <div class="inherit-width pa-2">
+            <!-- No User [Start] -->
+            <div v-if="!user"><h3>Please login</h3></div>
+            <!-- No User [End] -->
+            <!-- Yes User [Start] -->
+            <!-- Yes Space [Start] -->
+            <div v-if="user && spaceId" class="inherit-width">
+                <router-link :to="{ name: 'Space', params: { id: spaceId } }">
+                    <v-btn>
+                        <v-icon>mdi-table-arrow-left</v-icon>
+                    </v-btn>
+                </router-link>
+            </div>
+            <!-- Yes Space [End] -->
+            <!-- No Space [Start] -->
+            <div v-if="user && !spaceId" class="inherit-width">
+                <v-col>
+                    <h3>Seems like you are not part of any space.</h3>
+                    <h5>Please join a space to use the Shopping and Task lists:</h5>
+                    <v-form class="mt-3" ref="selectSpaceForm" v-model="spaceSelectionFormValid" lazy-validation>
+                        <v-row class="justify-start">
+                            <v-col class="p-auto" cols="7">
+                                <v-select light outlined dense :items="spacesList" item-text="title" item-value="id" label="Select Space:" :rules="requiredRule" v-model="selectedSpaceId"></v-select>
+                            </v-col>
+                            <v-col class="p-auto" cols="4">
+                                <v-btn light :disabled="!spaceSelectionFormValid" color="success" depressed @click="joinSpace()">Join Space</v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-form>
+                </v-col>
+            </div>
+            <!-- No Space [End] -->
+            <!-- Yes User [End] -->
+        </div>
     </v-container>
 </template>
 
