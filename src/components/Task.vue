@@ -3,16 +3,21 @@
         <v-list-item-avatar>
             <v-icon>{{ categoryIcon }}</v-icon>
         </v-list-item-avatar>
-        <v-list-item-content>
-            <v-list-item-title v-text="task.title"></v-list-item-title>
+        <v-list-item-content class="align-self-center">
+            <v-list-item-title class="text-capitalize" v-text="task.title"></v-list-item-title>
             <v-list-item-subtitle v-text="task.description"></v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action>
-            <v-list-item-avatar width="32">
+        <v-list-item-action class="align-self-stretch mb-2">
+            <v-list-item-avatar size="32">
                 <v-img referrerpolicy="no-referrer" alt="user" :src="task.User.picture"></v-img>
             </v-list-item-avatar>
-            <div>{{ task.dueDate }}</div>
+            <div class="duedate grey--text font-italic">{{ task.dueDate | dateFormat(task.dueDate) }}</div>
         </v-list-item-action>
+        <v-list-item-icon class="task-menu align-self-start ma-0">
+            <v-btn x-small icon>
+                <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+        </v-list-item-icon>
     </v-list-item>
 </template>
 <script>
@@ -40,16 +45,12 @@ export default {
                 return x.name === this.task.category;
             });
             const result = icon[0].icon;
-            console.log(result);
             return result;
         },
     },
     filters: {
         dateFormat(date) {
-            let d = new Date(date);
-            let datestring =
-                ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-            return datestring;
+            return new Date(Number(date)).toLocaleDateString();
         },
     },
     methods: {},
@@ -65,5 +66,11 @@ export default {
 .v-list-item--two-line .v-list-item__avatar:not(.v-list-item__avatar--horizontal),
 .v-list-item--two-line .v-list-item__icon {
     margin: auto !important;
+}
+.duedate {
+    font-size: 11px;
+}
+.task-menu.align-self-start.ma-0 {
+    margin-top: 0px !important;
 }
 </style>
