@@ -102,6 +102,7 @@ export default {
     methods: {
         async initData() {
             // TODO: Add all initial data the app requires (if any):
+            this.$store.dispatch('categories/FETCH_CATEGORIES');
         },
         initEventHandlers: function () {
             EventBus.$on('SHOW_ERROR', (payload) => {

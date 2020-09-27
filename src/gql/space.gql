@@ -45,10 +45,17 @@ fragment spaceResult on Space {
         id
         title
         description
+        category
         spaceId
         completed
         completedAt
         dueDate
-        userId
+        User {
+            id
+            picture
+            firstName
+            lastName
+            email
+        }
     }
 }

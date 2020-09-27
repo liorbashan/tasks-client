@@ -135,6 +135,10 @@ export default {
             let user = null;
             if (!this.user) {
                 const userToken = authService.getTokenFromLocalStorage();
+                if (!userToken) {
+                    EventBus.$emit('SHOW_ERROR', 'User is not authenticated');
+                    return;
+                }
                 const userData = authService.parseJwt(userToken);
                 const fetchUserPayload = { email: userData.email };
                 user = await this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
