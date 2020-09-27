@@ -44,12 +44,14 @@
 
                 <v-card-text class="white">
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
-                    <v-list v-if="tasks.length > 0" light three-line>
-                        <Task :task="tasks[0]" /><!-- task -->
-                        <v-divider></v-divider>
-                        <!-- task -->
-                        <v-divider></v-divider>
-                    </v-list>
+                    <div v-if="tasks.length > 0">
+                        <v-list v-for="(item, index) in tasks" :key="index" light three-line>
+                            <Task :task="item" /><!-- task -->
+                            <v-divider></v-divider>
+                            <!-- task -->
+                            <v-divider></v-divider>
+                        </v-list>
+                    </div>
                 </v-card-text>
             </v-card>
         </div>
@@ -74,6 +76,30 @@ export default {
     async created() {
         let user = this.$store.getters['user/GET_USER'];
         if (!user) {
+            user = await this.getUser();
+            let space = this.$store.getters['space/GET_SPACE'];
+            if (!space) {
+                space = await this.getSpace();
+                if (!space) {
+                    this.$router.push('/');
+                    return;
+                }
+            }
+        }
+        this.tasks = this.space.Tasks;
+        this.spaceMembers = this.space.Users;
+    },
+    computed: {
+        space() {
+            return this.$store.getters['space/GET_SPACE'];
+        },
+        user() {
+            return this.$store.getters['user/GET_USER'];
+        },
+    },
+    methods: {
+        async getUser() {
+            let user = null;
             const userToken = authService.getTokenFromLocalStorage();
             if (!userToken) {
                 EventBus.$emit('SHOW_ERROR', 'User is not authenticated');
@@ -86,34 +112,21 @@ export default {
                 console.log(error.message);
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
-            let space = this.$store.getters['space/GET_SPACE'];
-            if (!space) {
-                if (user.spaceId) {
-                    const payload = { id: user.spaceId };
-                    await this.$store.dispatch('space/FETCH_SPACE', payload).catch((error) => {
-                        console.log(error.message);
-                        EventBus.$emit('SHOW_ERROR', error.message);
-                    });
-                } else {
-                    EventBus.$emit('SHOW_ERROR', 'User is not associated with a space');
-                    this.$router.push('/');
-                    return;
-                }
+            return user;
+        },
+        async getSpace() {
+            let space = null;
+            if (this.user.spaceId) {
+                const payload = { id: this.user.spaceId };
+                space = await this.$store.dispatch('space/FETCH_SPACE', payload).catch((error) => {
+                    console.log(error.message);
+                    EventBus.$emit('SHOW_ERROR', error.message);
+                });
+            } else {
+                EventBus.$emit('SHOW_ERROR', 'User is not associated with a space');
             }
-            this.tasks = this.space.Tasks;
-            this.spaceMembers = this.space.Users;
-        }
-    },
-    computed: {
-        space() {
-            return this.$store.getters['space/GET_SPACE'];
+            return space;
         },
-        user() {
-            return this.$store.getters['user/GET_USER'];
-        },
-    },
-    methods: {
-        async getUser() {},
     },
 };
 </script>
