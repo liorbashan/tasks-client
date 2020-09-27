@@ -1,28 +1,71 @@
 <template>
     <v-container class="pa-0 white align-start" fill-height fluid>
         <v-row justify="space-around">
-            <v-card width="100%">
-                <v-img class="opacity" v-if="space" height="200px" referrerpolicy="no-referrer" :src="space.imageUrl">
-                    <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                        <router-link class="white--text" to="/">
-                            <v-icon dark>mdi-home</v-icon>
-                        </router-link>
-                        <v-toolbar-title class="title white--text pl-3">{{ space.title }}</v-toolbar-title>
+            <v-navigation-drawer v-model="drawer" color="white" light temporary app>
+                <v-list v-if="user">
+                    <v-list-item class="px-2">
+                        <v-list-item-avatar width="64" height="64">
+                            <v-img referrerpolicy="no-referrer" alt="user" :src="user.picture"></v-img>
+                        </v-list-item-avatar>
+                    </v-list-item>
+
+                    <v-list-item link>
+                        <v-list-item-content>
+                            <v-list-item-title class="title"> {{ user.firstName }} {{ user.lastName }} </v-list-item-title>
+                            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+
+                <v-divider></v-divider>
+
+                <v-list nav dense>
+                    <router-link to="/">
+                        <v-list-item link>
+                            <v-list-item-icon>
+                                <v-icon>mdi-home</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Home</v-list-item-title>
+                        </v-list-item>
+                    </router-link>
+                </v-list>
+            </v-navigation-drawer>
+            <v-card flat width="100%">
+                <v-img v-if="space" height="150px" referrerpolicy="no-referrer" :src="space.imageUrl">
+                    <v-app-bar dense prominent flat color="rgba(0, 0, 0, 0)">
+                        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                         <v-spacer></v-spacer>
                         <v-btn color="white" icon>
                             <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                     </v-app-bar>
-                    <v-card-title class="white--text mt-8">
-                        <v-avatar size="56">
-                            <img referrerpolicy="no-referrer" alt="user" :src="user.picture" />
-                        </v-avatar>
-                        <p v-if="user" class="ml-3">{{ user.firstName }} {{ user.lastName }}</p>
-                    </v-card-title>
+                    <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
 
-                <v-card-text>
-                    <div class="font-weight-bold ml-8 mb-2">Today</div>
+                <v-card-text class="white" color="white">
+                    <div class="font-weight-bold black--text">Tasks List</div>
+                    <v-list light>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-folder</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>My Files</v-list-item-title>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-account-multiple</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Shared with me</v-list-item-title>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-star</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Starred</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
                 </v-card-text>
             </v-card>
         </v-row>
@@ -35,42 +78,40 @@ export default {
     name: 'SpacePage',
     props: ['id'],
     data() {
-        return {};
+        return {
+            drawer: false,
+        };
     },
-    created() {},
+    created() {
+        let space = this.$store.getters['space/GET_SPACE'];
+        if (!space) {
+            const payload = { id: this.id };
+            this.$store.dispatch('space/FETCH_SPACE', payload);
+        }
+        let user = this.$store.getters['user/GET_USER'];
+        if (!user) {
+            const userToken = authService.getTokenFromLocalStorage();
+            const userData = authService.parseJwt(userToken);
+            const fetchUserPayload = { email: userData.email };
+            user = this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
+                console.log(error.message);
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+        }
+    },
     computed: {
         space() {
-            let space = this.$store.getters['space/GET_SPACE'];
-            if (!space) {
-                const payload = { id: this.id };
-                this.$store.dispatch('space/FETCH_SPACE', payload);
-            }
-            return space;
+            return this.$store.getters['space/GET_SPACE'];
         },
         user() {
-            let user = this.$store.getters['user/GET_USER'];
-            if (!user) {
-                const userToken = authService.getTokenFromLocalStorage();
-                const userData = authService.parseJwt(userToken);
-                const fetchUserPayload = { email: userData.email };
-                user = this.$store.dispatch('user/FETCH_USER', fetchUserPayload).catch((error) => {
-                    console.log(error.message);
-                    EventBus.$emit('SHOW_ERROR', error.message);
-                });
-            }
-            return user;
+            return this.$store.getters['user/GET_USER'];
         },
     },
 };
 </script>
 
 <style lang="scss">
-.opacity {
-    .v-image__image--cover {
-        opacity: 0.5;
-    }
-}
 .v-image__image--cover {
-    opacity: 0.5;
+    opacity: 0.75;
 }
 </style>

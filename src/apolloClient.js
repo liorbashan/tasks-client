@@ -1,14 +1,6 @@
 import ApolloClient from 'apollo-boost';
 import * as authService from './services/authService';
 
-const defaultOptions = {
-    watchQuery: {
-        fetchPolicy: 'no-cache',
-    },
-    query: {
-        fetchPolicy: 'no-cache',
-    },
-};
 export default new ApolloClient({
     uri: process.env.VUE_APP_GRAPHQL_URL,
     request: (operation) => {
@@ -19,6 +11,5 @@ export default new ApolloClient({
             },
         });
     },
-    defaultOptions,
     cache: null,
 });

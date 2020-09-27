@@ -4,7 +4,7 @@ import router from './router';
 import store from './store';
 import apollo from './apolloClient';
 import vuetify from './plugins/vuetify';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import AppLayout from './layouts/AppLayout';
 import PublicLayout from './layouts/PublicLayout';
 
