@@ -156,7 +156,7 @@ export default {
     opacity: 0.75;
 }
 .inherit-width.task-form-card {
-    background-color: #46529d !important;
+    background-color: indigo !important;// #46529d !important;
     color: #fff;
 }
 .task-form-title {
