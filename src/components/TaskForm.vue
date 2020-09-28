@@ -53,7 +53,7 @@ export default {
         this.spaceMembers = this.space.Users;
     },
     mounted() {
-        if (this.isEditMode) {
+        if (!this.isEditMode) {
             setTimeout(() => {
                 this.$refs.firstInput.focus();
             }, 0);

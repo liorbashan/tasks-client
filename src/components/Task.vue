@@ -4,6 +4,10 @@
             <v-icon>{{ categoryIcon }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content class="align-self-center">
+            <v-chip small v-if="isCompleted || isPastDue" class="completed-chip" :color="chipColor" outlined>
+                <v-icon small left>mdi-checkbox-marked-circle-outline</v-icon>
+                {{ chipText }}
+            </v-chip>
             <v-list-item-title class="text-capitalize" v-text="task.title"></v-list-item-title>
             <v-list-item-subtitle v-text="task.description"></v-list-item-subtitle>
         </v-list-item-content>
@@ -25,7 +29,7 @@
                         <v-list-item-icon class="mr-1">
                             <v-icon small>mdi-checkbox-marked-outline</v-icon>
                         </v-list-item-icon>
-                        <v-list-item-content class="task-menu-option">Done</v-list-item-content>
+                        <v-list-item-content @click="completeTask()" class="task-menu-option">Done</v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                         <v-list-item-icon class="mr-1">
@@ -72,6 +76,18 @@ export default {
             const result = icon[0].icon;
             return result;
         },
+        isPastDue() {
+            return Date.now() >= this.task.dueDate ? true : false;
+        },
+        isCompleted() {
+            return this.task.completed;
+        },
+        chipText() {
+            return this.isPastDue && !this.isCompleted ? 'Past Due' : 'Completed';
+        },
+        chipColor() {
+            return this.isCompleted ? 'success' : 'error';
+        },
     },
     filters: {
         dateFormat(date) {
@@ -92,6 +108,16 @@ export default {
             } else {
                 EventBus.$emit('SHOW_ERROR', 'counld not delete task');
             }
+        },
+        async completeTask() {
+            const updateTaskInput = {
+                id: this.task.id,
+                completed: true,
+            };
+            await this.$store.dispatch('tasks/UPDATE_TASK', updateTaskInput).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            EventBus.$emit('SHOW_SUCCESS', 'Task Completed');
         },
     },
 };
@@ -118,5 +144,12 @@ export default {
 }
 .task-menu-option {
     margin-top: 2px;
+}
+.completed-chip {
+    max-width: 110px !important;
+    margin-top: 1px !important;
+}
+.v-avatar.v-list-item__avatar.avatar-on-chip {
+    margin: auto 12px auto auto !important;
 }
 </style>

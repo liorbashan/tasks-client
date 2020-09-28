@@ -1,16 +1,10 @@
 <template>
     <v-app id="inspire">
-        <!-- HEADER START -->
-        <!-- <Header /> -->
-        <!-- HEADER END -->
         <v-main>
             <component :is="layout">
                 <router-view />
             </component>
         </v-main>
-        <!-- FOOTER START -->
-        <!-- <Footer /> -->
-        <!-- FOOTER END -->
         <!-- Globals: -->
         <v-dialog v-model="error.show" persistent width="500">
             <v-card>
@@ -41,7 +35,7 @@
         <v-overlay z-index="9999" :value="loader.show">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
-        <v-snackbar :color="snackbar.color" top right :timeout="snackbar.timeout" v-model="snackbar.show">
+        <v-snackbar :color="snackbar.color" bottom :timeout="snackbar.timeout" v-model="snackbar.show">
             {{ snackbar.message }}
             <br />
             <v-btn text @click="snackbar.show = false">Close</v-btn>
