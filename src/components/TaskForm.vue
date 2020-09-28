@@ -87,7 +87,7 @@ export default {
             } else {
                 debugger;
                 date = new Date(Number(date)).toLocaleDateString();
-                const [year, month, day] = date.split('/');
+                const [month, day, year] = date.split('/');
                 return `${month}/${day}/${year}`;
             }
         },
