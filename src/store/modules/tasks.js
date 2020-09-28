@@ -1,6 +1,6 @@
 import { EventBus } from '@/eventBus';
 import * as taskService from '../../services/taskService';
-const _ = require('lodash');
+// const _ = require('lodash');
 
 export default {
     namespaced: true,
@@ -12,18 +12,17 @@ export default {
             state.tasks = tasks;
         },
         ADD_TASK: function(state, newTask) {
-            state.tasks = [...state.tasks, ...newTask];
+            state.tasks = [...state.tasks, newTask];
         },
         UPDATE_TASK: function(state, updatedTask) {
             let task = state.tasks.find((x) => {
                 return x.id === updatedTask.id;
             });
-            task = updatedTask;
+            Object.assign(task, updatedTask);
         },
-        REMOVE_TASK: function(state, taskIdArr) {
-            _.remove(state.tasks, (item) => {
-                return taskIdArr.includes(item.id);
-            });
+        REMOVE_TASK: function(state, payload) {
+            const i = state.tasks.map((item) => item.id).indexOf(payload);
+            state.tasks.splice(i, 1);
         },
     },
     actions: {
@@ -73,9 +72,8 @@ export default {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
             if (result && result.affected === 1) {
-                deletedArr.push(payload);
+                commit('REMOVE_TASK', payload);
             }
-            commit('REMOVE_TASK', deletedArr);
             EventBus.$emit('HIDE_LOADER', 1);
             return result;
         },

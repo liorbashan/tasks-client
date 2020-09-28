@@ -48,7 +48,7 @@
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
-                            <Task :task="item" @edit="openTaskForm" @refresh="closeTaskForm()" />
+                            <Task :task="item" @edit="openTaskForm" />
                             <v-divider></v-divider>
                         </v-list>
                     </div>
@@ -83,7 +83,6 @@ export default {
     data() {
         return {
             drawer: false,
-            tasks: [],
             taskForForm: null,
             spaceMembers: [],
             taskFormDialogOpen: false,
@@ -101,8 +100,11 @@ export default {
                     return;
                 }
             }
+            let tasks = this.$store.getters['tasks/GET_ALL_TASKS'];
+            if (!tasks || tasks.length === 0) {
+                await this.getTasks();
+            }
         }
-        this.tasks = this.space.Tasks;
         this.spaceMembers = this.space.Users;
     },
     computed: {
@@ -111,6 +113,9 @@ export default {
         },
         user() {
             return this.$store.getters['user/GET_USER'];
+        },
+        tasks() {
+            return this.$store.getters['tasks/GET_ALL_TASKS'];
         },
     },
     methods: {
@@ -143,12 +148,20 @@ export default {
             }
             return space;
         },
+        async getTasks() {
+            if (this.user.spaceId) {
+                const payload = { spaceId: this.user.spaceId };
+                await this.$store.dispatch('tasks/FETCH_ALL_TASKS', payload).catch((error) => {
+                    console.log(error.message);
+                    EventBus.$emit('SHOW_ERROR', error.message);
+                });
+            }
+        },
         openTaskForm(taskObj) {
             this.taskForForm = taskObj;
             this.taskFormDialogOpen = true;
         },
         closeTaskForm() {
-            this.tasks = this.space.Tasks;
             this.taskFormDialogOpen = false;
         },
     },

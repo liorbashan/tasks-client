@@ -20,7 +20,6 @@
 
 <script>
 import { EventBus } from '@/eventBus';
-import * as taskService from '../services/taskService';
 export default {
     name: 'TaskForm',
     props: ['task'],
@@ -76,7 +75,7 @@ export default {
                         userId: this.taskUser,
                         category: this.taskCategory,
                     };
-                    task = await taskService.addTask(newTaskPayload).catch((error) => {
+                    task = await this.$store.dispatch('tasks/ADD_TASK', newTaskPayload).catch((error) => {
                         EventBus.$emit('SHOW_ERROR', error.message);
                     });
                 } else {
@@ -89,15 +88,12 @@ export default {
                         userId: this.taskUser,
                         category: this.taskCategory,
                     };
-                    task = await taskService.updateTask(updateTaskInput).catch((error) => {
+                    task = await this.$store.dispatch('tasks/UPDATE_TASK', updateTaskInput).catch((error) => {
                         EventBus.$emit('SHOW_ERROR', error.message);
                     });
                 }
                 EventBus.$emit('HIDE_LOADER', 1);
                 if (task) {
-                    // Update store:
-                    this.$store.dispatch('space/REMOVE_SPACE');
-                    await this.$store.dispatch('space/FETCH_SPACE', { id: space.id });
                     EventBus.$emit('SHOW_SUCCESS', `Task ${this.isEditMode ? 'Updated' : 'Created'} Successfuly`);
                 }
                 this.$emit('close');

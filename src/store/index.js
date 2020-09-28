@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import space from './modules/space';
 import categories from './modules/category';
 import user from './modules/user';
-import tasks from './modules/task';
+import tasks from './modules/tasks';
 
 Vue.use(Vuex);
 

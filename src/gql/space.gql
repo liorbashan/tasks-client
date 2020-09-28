@@ -41,21 +41,4 @@ fragment spaceResult on Space {
         description
         spaceId
     }
-    Tasks {
-        id
-        title
-        description
-        category
-        spaceId
-        completed
-        completedAt
-        dueDate
-        User {
-            id
-            picture
-            firstName
-            lastName
-            email
-        }
-    }
 }

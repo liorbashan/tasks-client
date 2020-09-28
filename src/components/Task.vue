@@ -84,13 +84,10 @@ export default {
             this.$emit('edit', task);
         },
         async deleteTask() {
-            const result = await taskService.deleteTask(this.task.id).catch((error) => {
+            const result = await this.$store.dispatch('tasks/DELETE_TASK', this.task.id).catch((error) => {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
-            if (result.affected === 1) {
-                this.$store.dispatch('space/REMOVE_SPACE');
-                await this.$store.dispatch('space/FETCH_SPACE', { id: this.task.spaceId });
-                EventBus.$emit('refresh');
+            if (result && result.affected === 1) {
                 EventBus.$emit('SHOW_SUCCESS', 'Task Deleted');
             } else {
                 EventBus.$emit('SHOW_ERROR', 'counld not delete task');
