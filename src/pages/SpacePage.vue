@@ -55,17 +55,17 @@
                 </v-card-text>
             </v-card>
         </div>
-        <v-dialog overlay-color="#46529d" v-model="taskFormDialogOpen" @closed="taskFormDialogOpen = false" fullscreen transition="dialog-bottom-transition">
+        <v-dialog overlay-color="#46529d" v-model="taskFormDialogOpen" @closed="closeTaskForm()" fullscreen transition="dialog-bottom-transition">
             <v-card light class="inherit-width task-form-card">
                 <v-toolbar class="pt-2" color="transparent" flat>
                     <v-toolbar-title class="white--text task-form-title">Task</v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <div class="circle" @click="taskFormDialogOpen = false">
+                    <div class="circle" @click="closeTaskForm()">
                         <div class="before"></div>
                         <div class="after"></div>
                     </div>
                 </v-toolbar>
-                <TaskForm v-if="taskFormDialogOpen" :task="taskForForm" />
+                <TaskForm v-if="taskFormDialogOpen" :task="taskForForm" @close="closeTaskForm()" />
             </v-card>
         </v-dialog>
     </v-container>
@@ -147,6 +147,10 @@ export default {
             this.taskForForm = taskObj;
             this.taskFormDialogOpen = true;
         },
+        closeTaskForm() {
+            this.tasks = this.space.Tasks;
+            this.taskFormDialogOpen = false;
+        },
     },
 };
 </script>
@@ -156,7 +160,7 @@ export default {
     opacity: 0.75;
 }
 .inherit-width.task-form-card {
-    background-color: indigo !important;// #46529d !important;
+    background-color: #46529d !important; // #46529d !important;
     color: #fff;
 }
 .task-form-title {

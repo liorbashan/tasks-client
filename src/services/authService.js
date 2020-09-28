@@ -13,7 +13,6 @@ export const signInWithGoogle = async () => {
         .auth()
         .signInWithPopup(provider)
         .catch((error) => {
-            debugger;
             console.log('🤕' + error.message);
             EventBus.$emit('SHOW_ERROR', error.message);
         });

@@ -1,0 +1,48 @@
+mutation add($addTaskInput: TaskInput!) {
+    AddTask(TaskInput: $addTaskInput) {
+        ...task
+    }
+}
+
+mutation update($updateTaskInput: TaskInput!) {
+    UpdateTask(TaskInput: $updateTaskInput) {
+        ...task
+    }
+}
+
+mutation delete($taskIdToDelete: String!) {
+    DeleteTask(ID: $taskIdToDelete) {
+        affected
+    }
+}
+
+query getAll($getAllTasksInput: TaskInput) {
+    QueryTasks(TaskInput: $getAllTasksInput) {
+        ...task
+    }
+}
+
+query getOne($getTaskInput: TaskInput!) {
+    GetTask(TaskInput: $getTaskInput) {
+        ...task
+    }
+}
+
+fragment task on Task {
+    id
+    title
+    description
+    category
+    spaceId
+    completed
+    completedAt
+    dueDate
+    User {
+        id
+        firstName
+        lastName
+        email
+        picture
+        phone
+    }
+}

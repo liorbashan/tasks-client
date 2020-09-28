@@ -20,6 +20,7 @@
 
 <script>
 import { EventBus } from '@/eventBus';
+import * as taskService from '../services/taskService';
 export default {
     name: 'TaskForm',
     props: ['task'],
@@ -62,23 +63,44 @@ export default {
     methods: {
         async submitTask() {
             if (this.$refs.taskForm.validate()) {
+                EventBus.$emit('SHOW_LOADER', 1);
+                const space = this.$store.getters['space/GET_SPACE'];
+                let task = null;
                 if (!this.isEditMode) {
-                    const task = await this.$store.dispatch('tasks/ADD_NEW_TASK', payload).catch((error) => {
-                        EventBus.$emit('SHOW_ERROR', error);
+                    // Create new Task:
+                    const newTaskPayload = {
+                        title: this.taskTitle,
+                        description: this.taskDescription,
+                        spaceId: space.id,
+                        dueDate: this.taskDueDate,
+                        userId: this.taskUser,
+                        category: this.taskCategory,
+                    };
+                    task = await taskService.addTask(newTaskPayload).catch((error) => {
+                        EventBus.$emit('SHOW_ERROR', error.message);
                     });
-                    if (task) {
-                        EventBus.$emit('SHOW_SUCCESS', 'New Task Added');
-                    }
                 } else {
-                    payload.taskId = this.task.id;
-                    const updateResult = await this.$store.dispatch('tasks/UPDATE_TASK_DETAILS', payload).catch((error) => {
-                        EventBus.$emit('SHOW_ERROR', error);
+                    // Update existing task:
+                    const updateTaskInput = {
+                        id: this.task.id,
+                        title: this.taskTitle,
+                        description: this.taskDescription,
+                        dueDate: this.taskDueDate,
+                        userId: this.taskUser,
+                        category: this.taskCategory,
+                    };
+                    task = await taskService.updateTask(updateTaskInput).catch((error) => {
+                        EventBus.$emit('SHOW_ERROR', error.message);
                     });
-                    if (updateResult) {
-                        EventBus.$emit('SHOW_SUCCESS', `Task Updated!`);
-                    }
                 }
-                this.close();
+                EventBus.$emit('HIDE_LOADER', 1);
+                if (task) {
+                    // Update store:
+                    this.$store.dispatch('space/REMOVE_SPACE');
+                    await this.$store.dispatch('space/FETCH_SPACE', { id: space.id });
+                    EventBus.$emit('SHOW_SUCCESS', `Task ${this.isEditMode ? 'Updated' : 'Created'} Successfuly`);
+                }
+                this.$emit('close');
             }
         },
         formatDate(date) {
