@@ -48,7 +48,7 @@
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
-                            <Task :task="item" @edit="openTaskForm" />
+                            <Task :task="item" @edit="openTaskForm" @refresh="closeTaskForm()" />
                             <v-divider></v-divider>
                         </v-list>
                     </div>

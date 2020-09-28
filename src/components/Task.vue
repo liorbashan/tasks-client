@@ -37,7 +37,7 @@
                         <v-list-item-icon class="mr-1">
                             <v-icon small>mdi-trash-can-outline</v-icon>
                         </v-list-item-icon>
-                        <v-list-item-content class="task-menu-option">Delete</v-list-item-content>
+                        <v-list-item-content @click="deleteTask()" class="task-menu-option">Delete</v-list-item-content>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -46,6 +46,7 @@
 </template>
 <script>
 import { EventBus } from '../eventBus';
+import * as taskService from '../services/taskService';
 export default {
     name: 'Task',
     components: {},
@@ -81,6 +82,19 @@ export default {
         editTask() {
             const task = this.task;
             this.$emit('edit', task);
+        },
+        async deleteTask() {
+            const result = await taskService.deleteTask(this.task.id).catch((error) => {
+                EventBus.$emit('SHOW_ERROR', error.message);
+            });
+            if (result.affected === 1) {
+                this.$store.dispatch('space/REMOVE_SPACE');
+                await this.$store.dispatch('space/FETCH_SPACE', { id: this.task.spaceId });
+                EventBus.$emit('refresh');
+                EventBus.$emit('SHOW_SUCCESS', 'Task Deleted');
+            } else {
+                EventBus.$emit('SHOW_ERROR', 'counld not delete task');
+            }
         },
     },
 };
