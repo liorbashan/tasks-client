@@ -85,10 +85,9 @@ export default {
             if (!date) {
                 return null;
             } else {
-                debugger;
                 date = new Date(Number(date)).toLocaleDateString();
                 const [month, day, year] = date.split('/');
-                return `${month}/${day}/${year}`;
+                return `${year}-${month}-${day}`;
             }
         },
     },
