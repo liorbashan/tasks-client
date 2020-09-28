@@ -42,7 +42,7 @@
                     <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
                 <v-card-text class="white">
-                    <v-btn fab absolute bottom right color="indigo">
+                    <v-btn fab absolute bottom right color="indigo" @click="openTaskForm()">
                         <v-icon>mdi-plus</v-icon>
                     </v-btn>
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
@@ -55,6 +55,18 @@
                 </v-card-text>
             </v-card>
         </div>
+        <v-dialog overlay-color="#46529d" v-model="taskFormDialogOpen" @closed="taskFormDialogOpen = false" fullscreen transition="dialog-bottom-transition">
+            <v-card light class="inherit-width task-form-card">
+                <v-toolbar class="pt-2" color="transparent" flat>
+                    <v-toolbar-title class="white--text task-form-title">Task</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <div class="circle" @click="taskFormDialogOpen = false">
+                        <div class="before"></div>
+                        <div class="after"></div>
+                    </div>
+                </v-toolbar>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -71,6 +83,7 @@ export default {
             drawer: false,
             tasks: [],
             spaceMembers: [],
+            taskFormDialogOpen: false,
         };
     },
     async created() {
@@ -127,6 +140,9 @@ export default {
             }
             return space;
         },
+        openTaskForm() {
+            this.taskFormDialogOpen = true;
+        },
     },
 };
 </script>
@@ -134,5 +150,63 @@ export default {
 <style lang="scss">
 .v-image__image--cover {
     opacity: 0.75;
+}
+.inherit-width.task-form-card {
+    background-color: #46529d !important;
+    color: #fff;
+}
+.task-form-title{
+    font-size: 40px !important;
+    align-self: baseline !important;
+}
+.circle {
+    width: 42px;
+    height: 42px;
+    position: relative;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    cursor: pointer;
+    z-index: 2;
+    padding-bottom: 1px;
+}
+.before,
+.after {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 2px;
+    background-color: white;
+    border-radius: 0;
+    top: 20px;
+    -webkit-transition: 150ms ease-out;
+    -moz-transition: 150ms ease-out;
+    -o-transition: 150ms ease-out;
+    transition: 150ms ease-out;
+    z-index: 0;
+}
+.before {
+    left: 7px;
+    -ms-transform: rotate(225deg);
+    -webkit-transform: rotate(225deg);
+    -moz-transform: rotate(225deg);
+    transform: rotate(225deg);
+    -webkit-transition: 300ms ease-in-out all;
+    -moz-transition: 300ms ease-in-out all;
+    -o-transition: 300ms ease-in-out all;
+    transition: 300ms ease-in-out all;
+}
+.after {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    right: 7px;
+    -ms-transform: rotate(-225deg);
+    -webkit-transform: rotate(-225deg);
+    -moz-transform: rotate(-225deg);
+    transform: rotate(-225deg);
+    -webkit-transition: 250ms ease-in all;
+    -moz-transition: 250ms ease-in all;
+    -o-transition: 250ms ease-in all;
+    transition: 250ms ease-in all;
 }
 </style>
