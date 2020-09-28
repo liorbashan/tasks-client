@@ -31,7 +31,7 @@
                         <v-list-item-icon class="mr-1">
                             <v-icon small>mdi-pencil</v-icon>
                         </v-list-item-icon>
-                        <v-list-item-content class="task-menu-option">Edit</v-list-item-content>
+                        <v-list-item-content @click="editTask()" class="task-menu-option">Edit</v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                         <v-list-item-icon class="mr-1">
@@ -77,7 +77,12 @@ export default {
             return new Date(Number(date)).toLocaleDateString();
         },
     },
-    methods: {},
+    methods: {
+        editTask() {
+            const task = this.task;
+            this.$emit('edit', task);
+        },
+    },
 };
 </script>
 <style lang="scss">

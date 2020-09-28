@@ -42,13 +42,13 @@
                     <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
                 <v-card-text class="white">
-                    <v-btn fab absolute bottom right color="indigo" @click="openTaskForm()">
+                    <v-btn v-if="space" fab absolute bottom right color="indigo" @click="openTaskForm(null)">
                         <v-icon>mdi-plus</v-icon>
                     </v-btn>
                     <h2 class="text-left text-body-1 black--text">All Tasks</h2>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
-                            <Task :task="item" />
+                            <Task :task="item" @edit="openTaskForm" />
                             <v-divider></v-divider>
                         </v-list>
                     </div>
@@ -65,6 +65,7 @@
                         <div class="after"></div>
                     </div>
                 </v-toolbar>
+                <TaskForm v-if="taskFormDialogOpen" :task="taskForForm" />
             </v-card>
         </v-dialog>
     </v-container>
@@ -74,14 +75,16 @@
 import { EventBus } from '../eventBus';
 import * as authService from '../services/authService';
 import Task from '../components/Task';
+import TaskForm from '../components/TaskForm';
 export default {
     name: 'SpacePage',
-    components: { Task },
+    components: { Task, TaskForm },
     props: ['id'],
     data() {
         return {
             drawer: false,
             tasks: [],
+            taskForForm: null,
             spaceMembers: [],
             taskFormDialogOpen: false,
         };
@@ -140,7 +143,8 @@ export default {
             }
             return space;
         },
-        openTaskForm() {
+        openTaskForm(taskObj) {
+            this.taskForForm = taskObj;
             this.taskFormDialogOpen = true;
         },
     },
@@ -155,7 +159,7 @@ export default {
     background-color: #46529d !important;
     color: #fff;
 }
-.task-form-title{
+.task-form-title {
     font-size: 40px !important;
     align-self: baseline !important;
 }
@@ -173,7 +177,7 @@ export default {
 .after {
     content: '';
     position: absolute;
-    width: 28px;
+    width: 27px;
     height: 2px;
     background-color: white;
     border-radius: 0;
