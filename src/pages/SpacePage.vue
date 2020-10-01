@@ -35,17 +35,37 @@
                     <v-app-bar dense prominent flat color="rgba(0, 0, 0, 0)">
                         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                         <v-spacer></v-spacer>
-                        <v-btn color="white" icon>
-                            <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
+                        <v-menu light bottom left>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn color="white" v-bind="attrs" v-on="on" icon>
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list dense>
+                                <v-list-item v-if="!showHistory">
+                                    <v-list-item-icon class="mr-1">
+                                        <v-icon small>mdi-history</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content @click="getAllCompletedTasks()" class="task-menu-option">Show Completed Tasks</v-list-item-content>
+                                </v-list-item>
+                                <v-list-item v-if="showHistory">
+                                    <v-list-item-icon class="mr-1">
+                                        <v-icon small>mdi-format-list-checkbox</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content @click="getTasks()" class="task-menu-option">Show Pending Tasks</v-list-item-content>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
                     </v-app-bar>
                     <v-card-title class="white--text">{{ space.title }}</v-card-title>
                 </v-img>
                 <v-card-text class="white">
-                    <v-btn v-if="space" fab absolute bottom right color="indigo" @click="openTaskForm(null)">
-                        <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                    <h2 class="text-left text-body-1 black--text">All Tasks</h2>
+                    <h2 class="text-left text-body-1 black--text">{{ cardTitle }}</h2>
+                    <div>
+                        <v-btn icon>
+                            <v-icon>mdi-filter-variant</v-icon>
+                        </v-btn>
+                    </div>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
                             <Task :task="item" @edit="openTaskForm" />
@@ -55,6 +75,9 @@
                 </v-card-text>
             </v-card>
         </div>
+        <v-btn v-if="space" fab absolute bottom right color="indigo" class="add-button-fixed" @click="openTaskForm(null)">
+            <v-icon>mdi-plus</v-icon>
+        </v-btn>
         <v-dialog overlay-color="#46529d" v-model="taskFormDialogOpen" @closed="closeTaskForm()" fullscreen transition="dialog-bottom-transition">
             <v-card light class="inherit-width task-form-card">
                 <v-toolbar class="pt-2" color="transparent" flat>
@@ -86,24 +109,25 @@ export default {
             taskForForm: null,
             spaceMembers: [],
             taskFormDialogOpen: false,
+            showHistory: false,
         };
     },
     async created() {
         let user = this.$store.getters['user/GET_USER'];
         if (!user) {
             user = await this.getUser();
-            let space = this.$store.getters['space/GET_SPACE'];
+        }
+        let space = this.$store.getters['space/GET_SPACE'];
+        if (!space) {
+            space = await this.getSpace();
             if (!space) {
-                space = await this.getSpace();
-                if (!space) {
-                    this.$router.push('/');
-                    return;
-                }
+                this.$router.push('/');
+                return;
             }
-            let tasks = this.$store.getters['tasks/GET_ALL_TASKS'];
-            if (!tasks || tasks.length === 0) {
-                await this.getTasks();
-            }
+        }
+        let tasks = this.$store.getters['tasks/GET_ALL_TASKS'];
+        if (!tasks || tasks.length === 0) {
+            await this.getTasks();
         }
         this.spaceMembers = this.space.Users;
     },
@@ -116,6 +140,9 @@ export default {
         },
         tasks() {
             return this.$store.getters['tasks/GET_ALL_TASKS'];
+        },
+        cardTitle() {
+            return this.showHistory ? 'Completed Tasks' : 'All Tasks';
         },
     },
     methods: {
@@ -150,11 +177,22 @@ export default {
         },
         async getTasks() {
             if (this.user.spaceId) {
-                const payload = { spaceId: this.user.spaceId };
+                const payload = { spaceId: this.user.spaceId, completed: false };
                 await this.$store.dispatch('tasks/FETCH_ALL_TASKS', payload).catch((error) => {
                     console.log(error.message);
                     EventBus.$emit('SHOW_ERROR', error.message);
                 });
+                this.showHistory = false;
+            }
+        },
+        async getAllCompletedTasks() {
+            if (this.user.spaceId) {
+                const payload = { spaceId: this.user.spaceId, completed: true };
+                await this.$store.dispatch('tasks/FETCH_ALL_TASKS', payload).catch((error) => {
+                    console.log(error.message);
+                    EventBus.$emit('SHOW_ERROR', error.message);
+                });
+                this.showHistory = true;
             }
         },
         openTaskForm(taskObj) {
@@ -229,5 +267,9 @@ export default {
     -moz-transition: 250ms ease-in all;
     -o-transition: 250ms ease-in all;
     transition: 250ms ease-in all;
+}
+.add-button-fixed {
+    position: fixed !important;
+    bottom: 15px !important;
 }
 </style>
