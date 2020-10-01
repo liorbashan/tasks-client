@@ -62,7 +62,7 @@
                 <v-card-text class="white">
                     <h2 class="text-left text-body-1 black--text">{{ cardTitle }}</h2>
                     <div>
-                        <v-btn @click="showFilterLine = !showFilterLine" dark color="black" icon>
+                        <v-btn @click="toggleFilterLine()" dark color="black" icon>
                             <v-icon>mdi-filter-variant</v-icon>
                         </v-btn>
                         <div v-if="showFilterLine" class="filters pt-2 pb-2 d-flex flex-row justify-space-between align-baseline">
@@ -72,7 +72,7 @@
                     </div>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
-                            <Task :task="item" @edit="openTaskForm" />
+                            <Task :task="item" @details="openSummaryDialog" @edit="openTaskForm" />
                             <v-divider></v-divider>
                         </v-list>
                     </div>
@@ -95,6 +95,11 @@
                 <TaskForm v-if="taskFormDialogOpen" :task="taskForForm" @close="closeTaskForm()" />
             </v-card>
         </v-dialog>
+        <v-dialog overlay-color="black" class="summaryDialog" v-model="showTaskSummary" max-width="290">
+            <v-container class="detailsContainer pa-0">
+                <TaskSummary v-if="taskForSummary" :task="taskForSummary" @close="closeSummaryDialog()" />
+            </v-container>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -103,14 +108,16 @@ import { EventBus } from '../eventBus';
 import * as authService from '../services/authService';
 import Task from '../components/Task';
 import TaskForm from '../components/TaskForm';
+import TaskSummary from '../components/TaskSummary';
 export default {
     name: 'SpacePage',
-    components: { Task, TaskForm },
+    components: { Task, TaskForm, TaskSummary },
     props: ['id'],
     data() {
         return {
             drawer: false,
             taskForForm: null,
+            taskForSummary: null,
             spaceMembers: [],
             taskFormDialogOpen: false,
             showHistory: false,
@@ -118,6 +125,7 @@ export default {
             categoryList: [],
             filterUser: false,
             filterCategory: 'All',
+            showTaskSummary: false,
         };
     },
     async created() {
@@ -203,6 +211,15 @@ export default {
                 });
             }
         },
+        async toggleFilterLine() {
+            this.showFilterLine = !this.showFilterLine;
+            if (!this.showFilterLine) {
+                this.filterUser = false;
+                this.filterCategory = 'All';
+                this.showHistory = false;
+                this.getTasks();
+            }
+        },
         async toggleHistoryFilter(showHistory) {
             this.showHistory = showHistory;
             this.getTasks();
@@ -221,6 +238,14 @@ export default {
         },
         closeTaskForm() {
             this.taskFormDialogOpen = false;
+        },
+        openSummaryDialog(taskObj) {
+            this.taskForSummary = taskObj;
+            this.showTaskSummary = true;
+        },
+        closeSummaryDialog() {
+            this.showTaskSummary = false;
+            this.taskForSummary = null;
         },
     },
 };
@@ -294,5 +319,11 @@ export default {
 }
 .filterItem {
     max-width: 45% !important;
+}
+.summaryDialog {
+    box-shadow: none !important;
+}
+.detailsContainer{
+    border: 2px solid indigo;
 }
 </style>

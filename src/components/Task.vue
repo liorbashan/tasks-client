@@ -1,5 +1,5 @@
 <template>
-    <v-list-item class="pa-0">
+    <v-list-item @dblclick="openDetails()" class="pa-0">
         <v-list-item-avatar>
             <v-icon>{{ categoryIcon }}</v-icon>
         </v-list-item-avatar>
@@ -118,6 +118,10 @@ export default {
                 EventBus.$emit('SHOW_ERROR', error.message);
             });
             EventBus.$emit('SHOW_SUCCESS', 'Task Completed');
+        },
+        openDetails() {
+            const task = this.task;
+            this.$emit('details', task);
         },
     },
 };
