@@ -46,13 +46,13 @@
                                     <v-list-item-icon class="mr-1">
                                         <v-icon small>mdi-history</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content @click="getAllCompletedTasks()" class="task-menu-option">Show Completed Tasks</v-list-item-content>
+                                    <v-list-item-content @click="toggleHistoryFilter(true)" class="task-menu-option">Show Completed Tasks</v-list-item-content>
                                 </v-list-item>
                                 <v-list-item v-if="showHistory">
                                     <v-list-item-icon class="mr-1">
                                         <v-icon small>mdi-format-list-checkbox</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content @click="getTasks()" class="task-menu-option">Show Pending Tasks</v-list-item-content>
+                                    <v-list-item-content @click="toggleHistoryFilter(false)" class="task-menu-option">Show Pending Tasks</v-list-item-content>
                                 </v-list-item>
                             </v-list>
                         </v-menu>
@@ -62,9 +62,13 @@
                 <v-card-text class="white">
                     <h2 class="text-left text-body-1 black--text">{{ cardTitle }}</h2>
                     <div>
-                        <v-btn icon>
+                        <v-btn @click="showFilterLine = !showFilterLine" dark color="black" icon>
                             <v-icon>mdi-filter-variant</v-icon>
                         </v-btn>
+                        <div v-if="showFilterLine" class="filters pt-2 pb-2 d-flex flex-row justify-space-between align-baseline">
+                            <v-checkbox class="filterItem" light @change="toggleAssignedToMe($event)" label="Assigned to me"></v-checkbox>
+                            <v-select class="filterItem" dense outlined light @change="toggleCategoty($event)" :items="categoryList" item-text="name" item-value="name" label="Category"></v-select>
+                        </div>
                     </div>
                     <div v-if="tasks.length > 0">
                         <v-list v-for="(item, index) in tasks" :key="index" light three-line>
@@ -110,9 +114,15 @@ export default {
             spaceMembers: [],
             taskFormDialogOpen: false,
             showHistory: false,
+            showFilterLine: false,
+            categoryList: [],
+            filterUser: false,
+            filterCategory: 'All',
         };
     },
     async created() {
+        this.categoryList = this.$store.getters['categories/GET_CATEGORIES'];
+        this.categoryList.unshift({ icon: '', name: 'All' });
         let user = this.$store.getters['user/GET_USER'];
         if (!user) {
             user = await this.getUser();
@@ -178,22 +188,32 @@ export default {
         async getTasks() {
             if (this.user.spaceId) {
                 const payload = { spaceId: this.user.spaceId, completed: false };
+                if (this.filterCategory !== 'All') {
+                    payload.category = this.filterCategory;
+                }
+                if (this.filterUser) {
+                    payload.userId = this.user.id;
+                }
+                if (this.showHistory) {
+                    payload.completed = true;
+                }
                 await this.$store.dispatch('tasks/FETCH_ALL_TASKS', payload).catch((error) => {
                     console.log(error.message);
                     EventBus.$emit('SHOW_ERROR', error.message);
                 });
-                this.showHistory = false;
             }
         },
-        async getAllCompletedTasks() {
-            if (this.user.spaceId) {
-                const payload = { spaceId: this.user.spaceId, completed: true };
-                await this.$store.dispatch('tasks/FETCH_ALL_TASKS', payload).catch((error) => {
-                    console.log(error.message);
-                    EventBus.$emit('SHOW_ERROR', error.message);
-                });
-                this.showHistory = true;
-            }
+        async toggleHistoryFilter(showHistory) {
+            this.showHistory = showHistory;
+            this.getTasks();
+        },
+        async toggleAssignedToMe(e) {
+            this.filterUser = e;
+            this.getTasks();
+        },
+        async toggleCategoty(e) {
+            this.filterCategory = e;
+            this.getTasks();
         },
         openTaskForm(taskObj) {
             this.taskForForm = taskObj;
@@ -271,5 +291,8 @@ export default {
 .add-button-fixed {
     position: fixed !important;
     bottom: 15px !important;
+}
+.filterItem {
+    max-width: 45% !important;
 }
 </style>
