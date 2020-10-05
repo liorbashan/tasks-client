@@ -46,7 +46,7 @@
                                     <v-list-item-icon class="mr-1">
                                         <v-icon small>mdi-history</v-icon>
                                     </v-list-item-icon>
-                                    <v-list-item-content @click="toggleHistoryFilter(true)" class="task-menu-option">Show Completed Tasks</v-list-item-content>
+                                    <v-list-item-content @click="toggleHistoryFilter(true)" class="task-menu-option">History</v-list-item-content>
                                 </v-list-item>
                                 <v-list-item v-if="showHistory">
                                     <v-list-item-icon class="mr-1">

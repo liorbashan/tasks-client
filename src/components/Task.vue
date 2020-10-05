@@ -1,5 +1,5 @@
 <template>
-    <v-list-item @dblclick="openDetails()" class="pa-0">
+    <v-list-item @click="openDetails()" class="pa-0">
         <v-list-item-avatar>
             <v-icon>{{ categoryIcon }}</v-icon>
         </v-list-item-avatar>
@@ -17,7 +17,7 @@
             </v-list-item-avatar>
             <div class="duedate grey--text font-italic">{{ task.dueDate | dateFormat(task.dueDate) }}</div>
         </v-list-item-action>
-        <v-list-item-icon class="task-menu align-self-start ma-0">
+        <v-list-item-icon v-if="!task.completed" class="task-menu align-self-start ma-0">
             <v-menu light bottom left>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on" x-small icon>
